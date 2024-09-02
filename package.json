@@ -1,20 +1,112 @@
 {
-  "name": "ylphbq",
+  "name": "ylpbhq",
   "private": true,
   "version": "0.0.0",
+  "description": "鹞落坪环保区项目解决方案，基于 Vue3、TypeScript、Element Plus、Pinia 和 Vite 等主流技术",
+  "author": {
+    "name": "weixiaoxiang",
+    "email": "1935394906@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weixiaoxiang/ylpbhq.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "build:stage": "npm run typecheck && vite build --mode staging",
+    "build:prod": "npm run typecheck && vite build",
+    "preview:stage": "pnpm build:stage && vite preview",
+    "preview:prod": "pnpm build:prod && vite preview",
+    "typecheck:node": "vue-tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "lint:eslint": "eslint --cache --max-warnings 0 \"{src,tests,types}/**/*.{vue,js,jsx,ts,tsx}\" --fix",
+    "lint:prettier": "prettier --write \"{src,tests,types}/**/*.{vue,js,jsx,ts,tsx,json,css,less,scss,html,md}\"",
+    "lint": "pnpm lint:eslint && pnpm lint:prettier",
+    "test": "vitest"
   },
   "dependencies": {
-    "vue": "^3.4.37"
+    "@element-plus/icons-vue": "^2.3.1",
+    "@panzoom/panzoom": "^4.5.1",
+    "@siedlerchr/types-ol-ext": "^3.5.0",
+    "animate.css": "^4.1.1",
+    "axios": "^1.7.5",
+    "cesium": "^1.120.0",
+    "dayjs": "^1.11.13",
+    "echarts": "^5.5.1",
+    "element-plus": "^2.8.1",
+    "js-cookie": "^3.0.5",
+    "lodash-es": "^4.17.21",
+    "mitt": "^3.0.1",
+    "nanoid": "^5.0.7",
+    "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
+    "ol": "^10.1.0",
+    "ol-ext": "^4.0.23",
+    "pinia": "^2.2.2",
+    "pinia-plugin-persistedstate": "^3.2.3",
+    "viewerjs": "^1.11.6",
+    "vue": "^3.4.37",
+    "vue-router": "^4.4.3",
+    "vue-seamless-scroll": "^1.1.23",
+    "vue3-pdf-app": "^1.0.3",
+    "vxe-table": "^4.6.18",
+    "vxe-table-plugin-element": "^4.0.4",
+    "xe-utils": "^3.5.30"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^22.5.1",
+    "@types/nprogress": "^0.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
     "@vitejs/plugin-vue": "^5.1.2",
+    "@vitejs/plugin-vue-jsx": "^4.0.1",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "eslint": "^9.9.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.27.0",
+    "lint-staged": "^15.2.9",
+    "prettier": "^3.3.3",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "sass": "^1.77.8",
     "typescript": "^5.5.3",
+    "unplugin-auto-import": "^0.18.2",
+    "unplugin-icons": "^0.19.2",
+    "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.1",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "vite-svg-loader": "^5.1.0",
+    "vitest": "^2.0.5",
+    "vue-eslint-parser": "^9.4.3",
     "vue-tsc": "^2.0.29"
-  }
+  },
+  "lint-staged": {
+    "*.{vue,js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,less,scss,html,md}": [
+      "prettier --write"
+    ],
+    "package.json": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "鹞落坪",
+    "保护区",
+    "vue",
+    "vue3",
+    "vite",
+    "element-plus",
+    "ts",
+    "typescript"
+  ],
+  "license": "MIT"
 }
