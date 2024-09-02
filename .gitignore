@@ -6,7 +6,7 @@ dist
 .git/*
 pnpm-lock.yaml
 
-src/autoImport/*
+src/autoImport
 .eslintrc-auto-import.js
 # Editor directories and files
 .vscode/*
