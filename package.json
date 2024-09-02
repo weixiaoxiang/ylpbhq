@@ -70,6 +70,7 @@
     "eslint": "^9.9.1",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-vue": "^9.27.0",
+    "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
     "postcss": "^8.4.43",
     "prettier": "^3.3.3",
@@ -101,6 +102,11 @@
     "package.json": [
       "prettier --write"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "keywords": [
     "鹞落坪",
