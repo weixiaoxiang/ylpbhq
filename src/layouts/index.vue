@@ -1,6 +1,4 @@
-<script lang="ts" setup>
-const a = 1234;
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div class="app-container">
