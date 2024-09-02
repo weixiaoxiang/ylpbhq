@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+const a = 123;
 </script>
 
 <template>
