@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-const test = 123;
-console.log(test)
+const test = 123
+// console.log(test)
 </script>
 
 <template>
