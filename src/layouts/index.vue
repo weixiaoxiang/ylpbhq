@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const test = 123
+const test = 123;
 console.log(test)
 </script>
 
