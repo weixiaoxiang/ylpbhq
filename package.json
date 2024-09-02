@@ -93,21 +93,16 @@
     "vue-tsc": "^2.0.29"
   },
   "lint-staged": {
-    "*.{vue,js,jsx,ts,tsx}": [
+    "*.js": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "git add"
     ],
-    "*.{css,less,scss,html,md}": [
-      "prettier --write"
-    ],
-    "package.json": [
-      "prettier --write"
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "keywords": [
     "鹞落坪",
