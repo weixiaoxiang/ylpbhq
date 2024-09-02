@@ -95,19 +95,9 @@
   "lint-staged": {
     "*.{vue,js,jsx,ts,tsx}": [
       "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{css,less,scss,html,md}": [
-      "prettier --write"
-    ],
-    "package.json": [
-      "prettier --write"
+      "prettier --write",
+      "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "keywords": [
     "鹞落坪",
