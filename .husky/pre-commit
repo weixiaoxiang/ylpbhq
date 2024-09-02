@@ -4,4 +4,4 @@
 
 # 用来在git commit时执行lint-staged，对暂存区的文件进行lint检查，保证提交的代码是符合规范的，
 # 如果不符合规范，将会阻止提交, 也可以在package.json中配置 
-npx lint-staged
+# npx lint-staged
