@@ -31,7 +31,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       /** 设置 host: true 才可以使用 Network 的形式，以 IP 访问项目 */
       host: true, // host: "0.0.0.0"
       /** 端口号 */
-      port: 3333,
+      port: 4713,
       /** 是否自动打开浏览器 */
       open: false,
       /** 跨域设置允许 */
@@ -149,6 +149,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       }),
       /** 自动导入函数 */
       AutoImport({
+        // 自动导入的库
         imports: [
           "vue",
           "vue-router",
@@ -190,7 +191,13 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
         resolvers: [ElementPlusResolver()],
         dts: path.resolve(pathSrc + "/autoImport", "auto-imports.d.ts"),
         // 自动导入方法所在的文件目录 - 这里添加utils 和 store
-        dirs: [path.resolve(pathSrc + "/utils"), path.resolve(pathSrc + "/store")]
+        dirs: [path.resolve(pathSrc + "/utils"), path.resolve(pathSrc + "/store")],
+        // ESLint配置文件,不然npm run lint:eslint会报错
+        eslintrc: {
+          enabled: true, // 生成 ESLint 配置文件
+          filepath: "./.eslintrc-auto-import.js", // 配置文件路径
+          globalsPropValue: true // 将自动导入的函数添加到全局变量
+        }
       }),
       /** 自动导入组件 */
       Components({

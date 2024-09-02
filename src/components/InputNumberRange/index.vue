@@ -90,15 +90,15 @@ const props = defineProps({
     default: () => [],
     validator(val: []) {
       if (val && val.length > 0) {
-        // @ts-ignore
+        // @ts-expect-error
         if (val.length !== 2) {
           throw new Error("请传入长度为2的Number数组")
         }
-        // @ts-ignore
+        // @ts-expect-error
         if (typeof val[0] !== "number" || typeof val[1] !== "number") {
           throw new Error("取值范围只接受Number类型,请确认")
         }
-        // @ts-ignore
+        // @ts-expect-error
         if (val[1] < val[0]) {
           throw new Error("valueRange格式须为[最小值,最大值],请确认")
         }
@@ -196,9 +196,9 @@ const updateValue = (min: number, max: number) => {
 // 取值范围判定
 const decideValueRange = (min: number, max: number) => {
   if (props.valueRange && props.valueRange.length > 0) {
-    // @ts-ignore
+    // @ts-expect-error
     min = min < props.valueRange[0] ? props.valueRange[0] : min > props.valueRange[1] ? props.valueRange[1] : min
-    // @ts-ignore
+    // @ts-expect-error
     max = max > props.valueRange[1] ? props.valueRange[1] : max
   }
   return { min, max }

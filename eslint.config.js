@@ -7,6 +7,7 @@ import pluginVue from "eslint-plugin-vue"
 
 import commpnParser from "vue-eslint-parser"
 import prettier from "eslint-plugin-prettier"
+import eslintrcAutoImport from "./.eslintrc-auto-import.js"
 export default [
   // languageOptions：配置如何检查 js 代码
   {
@@ -37,6 +38,10 @@ export default [
       }
     }
   },
+  {
+    // unplugin-auto-import 自动生成的eslint配置文件
+    languageOptions: eslintrcAutoImport
+  },
   // 原来的extends替换为如下模式
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
@@ -46,6 +51,8 @@ export default [
       prettier
     },
     rules: {
+      "@typescript-eslint/no-unused-expressions": "off", // 关闭对未使用的表达式的检测
+      "@typescript-eslint/no-empty-object-type": "off", // 禁止空对象类型
       // 开启这条规则后，会将prettier的校验规则传递给eslint，这样eslint就可以按照prettier的方式来进行代码格式的校验
       "prettier/prettier": "error",
       // eslint（https://eslint.bootcss.com/docs/rules/）
