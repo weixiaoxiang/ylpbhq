@@ -1,4 +1,7 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const test = 123
+console.log(test)
+</script>
 
 <template>
   <div class="app-container">
