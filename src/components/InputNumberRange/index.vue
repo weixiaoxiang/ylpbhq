@@ -2,7 +2,7 @@
   <div class="number-range-container">
     <div
       :id="usePrepend ? 'prepend' : ''"
-      :class="{ 'slot-default': slotStyle === 'default', 'slot-pend ': usePrepend }"
+      :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': usePrepend }"
     >
       <slot name="prepend">
         <!-- 前缀插槽 -->
@@ -43,7 +43,7 @@
         :controls="false"
       />
     </div>
-    <div :id="useAppend ? 'append' : ''" :class="{ 'slot-default': slotStyle === 'default', 'slot-pend ': useAppend }">
+    <div :id="useAppend ? 'append' : ''" :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': useAppend }">
       <slot name="append">
         <!-- 后缀插槽 -->
       </slot>
