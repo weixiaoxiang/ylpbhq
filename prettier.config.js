@@ -18,5 +18,7 @@ export default {
   /** 对象或者数组的最后一个元素后面不要加逗号 */
   trailingComma: "none",
   /** 是否加分号 */
-  semi: false
+  semi: false,
+  // 插件配置
+  plugins: ["prettier-plugin-tailwindcss"]
 }
