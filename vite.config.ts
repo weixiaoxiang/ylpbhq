@@ -91,8 +91,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
            */
           manualChunks: {
             map: ["ol", "cesium"],
-            vue: ["vue", "vue-router", "pinia"],
-            element: ["element-plus", "@element-plus/icons-vue"],
+            vue: ["element-plus", "@element-plus/icons-vue"],
             vxe: ["vxe-table", "vxe-table-plugin-element", "xe-utils"]
           }
         },
