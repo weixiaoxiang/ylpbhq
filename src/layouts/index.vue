@@ -1,20 +1,4 @@
-<script lang="ts" setup>
-import { useDraggable, UseDraggableOptions } from "@vueuse/core"
-const test = ref(null)
-const test1 = ref(null)
-const style = ref({})
-onMounted(() => {
-  const draggable = useDraggable(test1, {
-    containerElement: test,
-    capture: false,
-    initialValue: {
-      x: 0,
-      y: 0
-    }
-  } as UseDraggableOptions)
-  style.value = toRef(draggable.style)
-})
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div class="app-container">
@@ -36,11 +20,6 @@ onMounted(() => {
           </div>
         </div>
       </el-scrollbar>
-    </div>
-    <div style="position: relative" ref="test" class="mx-auto mt-3 h-[200px] w-[300px] border">
-      <div ref="test1" class="absolute h-1/4 w-1/4 cursor-pointer select-none bg-black text-white" :style="style">
-        拖动
-      </div>
     </div>
   </div>
 </template>
