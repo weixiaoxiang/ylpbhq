@@ -28,16 +28,6 @@
 <style lang="scss" scoped>
 .box {
   .box1 {
-    // master分支
-    font-size: 20px;
-
-    font-style: italic;
-    font-weight: bold;
-    // 测试123
-    // ceshi11
-    color: rgb(32, 148, 198);
-    // ceshi
-    color: red;
   }
 }
 </style>
