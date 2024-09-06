@@ -35,7 +35,7 @@
     font-weight: bold;
     // 测试123
     // ceshi11
-    color: red;
+    color: rgb(32, 148, 198);
   }
 }
 </style>
