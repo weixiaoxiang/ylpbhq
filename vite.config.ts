@@ -190,7 +190,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
         resolvers: [ElementPlusResolver()],
         dts: path.resolve(pathSrc + "/autoImport", "auto-imports.d.ts"),
         // 自动导入方法所在的文件目录 - 这里添加utils 和 store
-        dirs: [path.resolve(pathSrc + "/utils"), path.resolve(pathSrc + "/store")],
+        dirs: [path.resolve(pathSrc + "/utils/**/*"), path.resolve(pathSrc + "/store/**/*")],
         // ESLint配置文件,不然npm run lint:eslint会报错
         eslintrc: {
           enabled: true, // 生成 ESLint 配置文件
