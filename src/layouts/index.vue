@@ -32,6 +32,7 @@
     font-size: 18px;
 
     font-style: italic;
+    font-weight: bold;
   }
 }
 </style>
