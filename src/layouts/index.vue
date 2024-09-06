@@ -28,8 +28,10 @@
 <style lang="scss" scoped>
 .box {
   .box1 {
-  // master分支
-  font-size:18px;
+    // master分支
+    font-size: 18px;
+
+    font-style: italic;
   }
 }
 </style>
