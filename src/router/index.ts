@@ -1,5 +1,7 @@
 import { type RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from "vue-router"
 const Layouts = () => import("@/layouts/index.vue")
+const LayoutsSystem = () => import("@/layoutsSystem/index.vue")
+
 /**
  * 常驻路由
  * 除了 redirect/403/404/login 等隐藏页面，其他页面建议设置 Name 属性
@@ -39,8 +41,66 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layouts,
     meta: {
       title: "项目根路由"
-    }
+    },
+    children: [
+      // {
+      //   path: "",
+      //   component: () => import("@/layouts/index.vue"),
+      //   name: "Layouts",
+      //   meta: {
+      //     title: "Layouts"
+      //   }
+      // }
+    ]
+  },
+  {
+    path: "/system",
+    component: LayoutsSystem,
+    redirect: "/system/item1-1",
+    meta: {
+      title: "后台项目根路由"
+    },
+    children: [
+      {
+        path: "item1-1",
+        component: () => import("@/layoutsSystem/page-test/page1.vue"),
+        name: "item1-1",
+        meta: {
+          title: "item1-1"
+        }
+      },
+      {
+        path: "item1-2",
+        component: () => import("@/layoutsSystem/page-test/page2.vue"),
+        name: "item1-2",
+        meta: {
+          title: "item1-2"
+        }
+      },
+      {
+        path: "item2",
+        component: () => import("@/layoutsSystem/page-test/page3.vue"),
+        meta: {
+          title: "item2"
+        }
+      },
+      {
+        path: "item3",
+        component: () => import("@/layoutsSystem/page-test/page4.vue"),
+        meta: {
+          title: "item3"
+        }
+      },
+      {
+        path: "item4",
+        component: () => import("@/layoutsSystem/page-test/page5.vue"),
+        meta: {
+          title: "item4"
+        }
+      }
+    ]
   }
+
   // ************************************* 项目正式路由end *************************************
 ]
 /** 路由模式 */

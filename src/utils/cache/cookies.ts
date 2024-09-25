@@ -2,7 +2,7 @@
 
 import Cookies from "js-cookie"
 
-const SYSTEM_NAME = "ylpbhq"
+const SYSTEM_NAME = import.meta.env.VITE_APP_TITLE
 /** 缓存数据时用到的 Key */
 class CacheKey {
   static readonly TOKEN = `${SYSTEM_NAME}-token-key`

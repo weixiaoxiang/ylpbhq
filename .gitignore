@@ -11,4 +11,5 @@ src/autoImport
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/launch.json
 pnpm-lock.yaml

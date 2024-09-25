@@ -1,4 +1,3 @@
-import store from "@/store"
 export const useConfigStore = defineStore(
   "config",
   () => {

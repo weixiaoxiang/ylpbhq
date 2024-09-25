@@ -19,6 +19,8 @@ export default {
   trailingComma: "none",
   /** 是否加分号 */
   semi: false,
+  /** 每一行只能有一个属性 */
+  singleAttributePerLine: true,
   // 插件配置
   plugins: ["prettier-plugin-tailwindcss"]
 }

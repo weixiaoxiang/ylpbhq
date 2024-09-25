@@ -7,6 +7,8 @@ import vueJsx from "@vitejs/plugin-vue-jsx"
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import AutoImport from "unplugin-auto-import/vite"
 import Components from "unplugin-vue-components/vite"
+import Icons from "unplugin-icons/vite"
+import IconsResolver from "unplugin-icons/resolver"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import svgLoader from "vite-svg-loader"
 import { createHtmlPlugin } from "vite-plugin-html"
@@ -187,7 +189,13 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
             "ol/format": ["GeoJSON", "WKT"]
           }
         ],
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          // 自动导入图标组件步骤1
+          IconsResolver({
+            prefix: "Icon"
+          }),
+          ElementPlusResolver()
+        ],
         dts: path.resolve(pathSrc + "/autoImport", "auto-imports.d.ts"),
         // 自动导入方法所在的文件目录 - 这里添加utils 和 store
         dirs: [path.resolve(pathSrc + "/utils/**/*"), path.resolve(pathSrc + "/store/**/*")],
@@ -201,11 +209,22 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       /** 自动导入组件 */
       Components({
         // 其他自定义组件
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          // 自动导入图标组件步骤2
+          IconsResolver({
+            enabledCollections: ["ep"]
+          }),
+          ElementPlusResolver()
+        ],
         // 自动导入组件所在的文件目录
         dirs: [path.resolve(pathSrc + "/components")],
         // 生成的 .d.ts 文件路径
         dts: path.resolve(pathSrc + "/autoImport", "components.d.ts")
+      }),
+      /** 自动导入图标组件步骤3 */
+      Icons({
+        autoInstall: true,
+        compiler: "vue3"
       })
     ],
     /** Vitest 单元测试配置：https://cn.vitest.dev/config */
