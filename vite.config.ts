@@ -110,7 +110,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           // 生成report报告页面
           visualizer({
             filename: "dist/report.html",
-            open: true,
+            open: false,
             gzipSize: true,
             brotliSize: true
           })
@@ -178,7 +178,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
               ["Tile", "TileLayer"],
               ["Vector", "VectorLayer"]
             ],
-            "ol/source": ["WMTS", "OSM", "TileWMS", ["Tile", "TileSource"], ["Vector", "VectorSource"]],
+            "ol/source": ["WMTS", "OSM", "XYZ", "TileWMS", ["Tile", "TileSource"], ["Vector", "VectorSource"]],
             "ol/geom": ["CircleGeom", "LineString", "MultiLineString", "Point", "Polygon"],
             "ol/control": ["ScaleLine", ["defaults", "defaultsControls"]],
             "ol/interaction": [["defaults", "defaultInteractions"]],
@@ -198,7 +198,11 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
         ],
         dts: path.resolve(pathSrc + "/autoImport", "auto-imports.d.ts"),
         // 自动导入方法所在的文件目录 - 这里添加utils 和 store
-        dirs: [path.resolve(pathSrc + "/utils/**/*"), path.resolve(pathSrc + "/store/**/*")],
+        dirs: [
+          path.resolve(pathSrc + "/hooks/**/*"),
+          path.resolve(pathSrc + "/utils/**/*"),
+          path.resolve(pathSrc + "/store/**/*")
+        ],
         // ESLint配置文件,不然npm run lint:eslint会报错
         eslintrc: {
           enabled: true, // 生成 ESLint 配置文件

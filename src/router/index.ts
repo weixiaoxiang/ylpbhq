@@ -42,15 +42,51 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: {
       title: "项目根路由"
     },
+    redirect: "/patrol",
     children: [
-      // {
-      //   path: "",
-      //   component: () => import("@/layouts/index.vue"),
-      //   name: "Layouts",
-      //   meta: {
-      //     title: "Layouts"
-      //   }
-      // }
+      {
+        path: "/patrol",
+        name: "Patrol",
+        meta: {
+          title: "智能巡护"
+        },
+        component: () => import("@/views/patrol/index.vue"),
+        redirect: "/patrol/survey",
+        children: [
+          {
+            path: "survey",
+            component: () => import("@/views/patrol/survey/index.vue"),
+            name: "Survey",
+            meta: {
+              title: "巡护概况"
+            }
+          },
+          {
+            path: "statistics",
+            component: () => import("@/views/patrol/statistics/index.vue"),
+            name: "Statistics",
+            meta: {
+              title: "巡护统计"
+            }
+          },
+          {
+            path: "record",
+            component: () => import("@/views/patrol/record/index.vue"),
+            name: "Record",
+            meta: {
+              title: "巡护记录"
+            }
+          },
+          {
+            path: "task",
+            component: () => import("@/views/patrol/task/index.vue"),
+            name: "Task",
+            meta: {
+              title: "任务管理"
+            }
+          }
+        ]
+      }
     ]
   },
   {

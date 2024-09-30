@@ -23,6 +23,9 @@ importers:
       animate.css:
         specifier: ^4.1.1
         version: 4.1.1
+      autofit.js:
+        specifier: ^3.1.3
+        version: 3.1.3
       axios:
         specifier: ^1.7.5
         version: 1.7.7
@@ -77,6 +80,9 @@ importers:
       vue:
         specifier: ^3.4.37
         version: 3.5.2(typescript@5.5.4)
+      vue-countup-v3:
+        specifier: ^1.4.2
+        version: 1.4.2(vue@3.5.2(typescript@5.5.4))
       vue-router:
         specifier: ^4.4.3
         version: 4.4.3(vue@3.5.2(typescript@5.5.4))
@@ -1161,6 +1167,9 @@ packages:
     engines: {node: '>= 4.5.0'}
     hasBin: true
 
+  autofit.js@3.1.3:
+    resolution: {integrity: sha512-+TWc28CqwXmEcyVRofESxPt9WisGENDcTFzeJsNPhkPDouWL98QzAZxrID8K32joBNrulN2N0OZiL6X9Kv3wxg==}
+
   autolinker@4.0.0:
     resolution: {integrity: sha512-fl5Kh6BmEEZx+IWBfEirnRUU5+cOiV0OK7PEt0RBKvJMJ8GaRseIOeDU3FKf4j3CE5HVefcjHmhYPOcaVt0bZw==}
 
@@ -1413,6 +1422,9 @@ packages:
   cors@2.8.5:
     resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
     engines: {node: '>= 0.10'}
+
+  countup.js@2.8.0:
+    resolution: {integrity: sha512-f7xEhX0awl4NOElHulrl4XRfKoNH3rB+qfNSZZyjSZhaAoUk6elvhH+MNxMmlmuUJ2/QNTWPSA7U4mNtIAKljQ==}
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -3600,6 +3612,11 @@ packages:
   vscode-uri@3.0.8:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
+  vue-countup-v3@1.4.2:
+    resolution: {integrity: sha512-nRC65jBcdgwybxqztgd/WaK8ZN5T9ECPyiCFGYFMewCsvqdRVo1CtpT7JREcPNF837Fgu/izTSFiuzrIGD6w0A==}
+    peerDependencies:
+      vue: ^3.0.0
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -4759,6 +4776,8 @@ snapshots:
 
   atob@2.1.2: {}
 
+  autofit.js@3.1.3: {}
+
   autolinker@4.0.0:
     dependencies:
       tslib: 2.7.0
@@ -5043,6 +5062,8 @@ snapshots:
     dependencies:
       object-assign: 4.1.1
       vary: 1.1.2
+
+  countup.js@2.8.0: {}
 
   cross-spawn@7.0.3:
     dependencies:
@@ -7396,6 +7417,11 @@ snapshots:
       - terser
 
   vscode-uri@3.0.8: {}
+
+  vue-countup-v3@1.4.2(vue@3.5.2(typescript@5.5.4)):
+    dependencies:
+      countup.js: 2.8.0
+      vue: 3.5.2(typescript@5.5.4)
 
   vue-demi@0.14.10(vue@3.5.2(typescript@5.5.4)):
     dependencies:

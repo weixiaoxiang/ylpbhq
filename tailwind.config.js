@@ -1,15 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 import typography from "@tailwindcss/typography"
-
 export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        primary: "#ff0000"
+        primary: "#ff0000",
+        custom1: "#7e8a9e",
+        custom2: "#afb6c1",
+        custom3: "#b1e1f6",
+        custom4: "#c4def8"
       },
       fontFamily: {
-        sans: ["微软雅黑", "sans-serif"]
+        sans: ["微软雅黑!important", "sans-serif!important"],
+        DDIN: ["D-DIN!important"],
+        PingFang: ["PingFang Regular!important"],
+        youshe: ["优设标题黑!important"]
       },
       fontSize: {
         12: ["12px", { lineHeight: "2em" }]
@@ -32,7 +38,8 @@ export default {
     function ({ addComponents }) {
       const components = {
         ".bgbox": {
-          "@apply bg-center bg-no-repeat bg-cover": {}
+          "@apply  bg-center bg-no-repeat": {},
+          backgroundSize: "100% 100%"
         },
         ".flexbox": {
           "@apply flex items-center justify-center": {}

@@ -17,12 +17,11 @@ import "vxe-table-plugin-element/dist/style.css"
 import "@/styles/index.scss"
 // 引入animate.css
 import "animate.css"
-import { getAssetsImages } from "@/hooks/useAssetsImages"
+import { getImg } from "@/utils"
 import * as echarts from "echarts"
 import mitt from "mitt"
 import piniaPluginPersist from "pinia-plugin-persistedstate"
 store.use(piniaPluginPersist)
-
 const app = createApp(App)
 /** 加载插件 */
 loadPlugins(app)
@@ -35,7 +34,7 @@ app.use(store).use(router)
 
 // 挂在全局生效的方法
 app.config.globalProperties.$fun = {
-  getAssetsImages: getAssetsImages
+  getImg: getImg
 }
 
 // 挂载echarts
