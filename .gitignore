@@ -6,6 +6,10 @@ dist
 .git/*
 pnpm-lock.yaml
 
+# 环境变量（勿提交仓库）
+.env
+.env.development
+
 src/autoImport
 .eslintrc-auto-import.js
 # Editor directories and files
