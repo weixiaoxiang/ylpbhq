@@ -10,8 +10,9 @@ import { loadDirectives } from "@/directives"
 
 // css
 import "normalize.css"
-import "element-plus/dist/index.css"
-import "element-plus/theme-chalk/dark/css-vars.css"
+// 全局引用element，本项目使用unplugin-vue-components按需加载样式,这块注释掉
+// import "element-plus/dist/index.css"
+// import "element-plus/theme-chalk/dark/css-vars.css"
 import "vxe-table/lib/style.css"
 import "vxe-table-plugin-element/dist/style.css"
 import "@/styles/index.scss"
@@ -19,6 +20,7 @@ import "@/styles/index.scss"
 import "animate.css"
 import { getImg } from "@/utils"
 import * as echarts from "echarts"
+import VueDOMPurifyHTML from "vue-dompurify-html"
 import mitt from "mitt"
 import piniaPluginPersist from "pinia-plugin-persistedstate"
 store.use(piniaPluginPersist)
@@ -31,7 +33,7 @@ loadSvg(app)
 loadDirectives(app)
 
 app.use(store).use(router)
-
+app.use(VueDOMPurifyHTML)
 // 挂在全局生效的方法
 app.config.globalProperties.$fun = {
   getImg: getImg

@@ -20,7 +20,7 @@ export default {
   /** 是否加分号 */
   semi: false,
   /** 每一行只能有一个属性 */
-  singleAttributePerLine: true,
+  singleAttributePerLine: true
   // 插件配置
-  plugins: ["prettier-plugin-tailwindcss"]
+  // plugins: ["prettier-plugin-tailwindcss"]
 }

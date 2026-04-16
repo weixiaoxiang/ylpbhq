@@ -14,7 +14,11 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 </script>
 
 <template>
-  <svg class="svg-icon" aria-hidden="true">
+  <svg
+    class="svg-icon"
+    :aria-label="name"
+    role="img"
+  >
     <use :href="symbolId" />
   </svg>
 </template>

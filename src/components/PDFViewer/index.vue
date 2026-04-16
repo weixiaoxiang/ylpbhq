@@ -1,6 +1,10 @@
 <template>
   <!-- viewer.properties: 该文件已放置本地，使用相对路径引入，亦可放置cdn上，使用网络路径引入 -->
-  <link rel="resource" type="application/l10n" href="/viewer.properties" />
+  <link
+    rel="resource"
+    type="application/l10n"
+    href="/viewer.properties"
+  />
   <VuePdfApp
     :page-scale="pageScale"
     :theme="theme"

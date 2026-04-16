@@ -4,10 +4,11 @@ defineOptions({
   name: "Layout"
 })
 // const tagsViewStore = useTagsViewStore()
+// console.log(route.path)
 </script>
 
 <template>
-  <div class="main-container h-full bg-[#0d152a]">
+  <div class="main-container h-full bg-[]">
     <Header />
     <div
       class="app-main"
@@ -34,6 +35,9 @@ defineOptions({
 </template>
 
 <style lang="scss" scoped>
+.main-container {
+  background-color: #0d152a;
+}
 #app-main {
   // background: #36c574;
   height: calc(100% - 70px);

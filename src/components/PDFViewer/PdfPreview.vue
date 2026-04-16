@@ -1,6 +1,13 @@
 <template>
   <div class="preview">
-    <PDFViewer v-if="PDFSrc" page-scale="page-fit" theme="dark" :src="PDFSrc" :key="path" @loaded="onLoaded" />
+    <PDFViewer
+      v-if="PDFSrc"
+      page-scale="page-fit"
+      theme="dark"
+      :src="PDFSrc"
+      :key="path"
+      @loaded="onLoaded"
+    />
   </div>
 </template>
 
@@ -13,7 +20,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const PDFSrc = ref<string>("")
-const baseURL = import.meta.env.VITE_BASE_URL
 const onLoaded = (pdfApp: any) => {
   console.info("loaded app:", pdfApp)
 }
@@ -22,7 +28,7 @@ watch(
   () => props.path,
   (newVal) => {
     if (newVal) {
-      PDFSrc.value = baseURL + newVal
+      PDFSrc.value = newVal
     }
   },
   {
@@ -33,8 +39,10 @@ watch(
 
 <style lang="scss" scoped>
 .preview {
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
+  width: 1200px;
+  height: 900px;
   overflow: hidden;
 }
 </style>

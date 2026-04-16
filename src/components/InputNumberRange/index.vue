@@ -1,55 +1,3 @@
-<template>
-  <div class="number-range-container">
-    <div
-      :id="usePrepend ? 'prepend' : ''"
-      :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': usePrepend }"
-    >
-      <slot name="prepend">
-        <!-- 前缀插槽 -->
-      </slot>
-    </div>
-    <div
-      class="number-range"
-      :class="{
-        'is-disabled': disabled,
-        'is-focus': isFocus,
-        'number-range-left-border-radius-0': usePrepend,
-        'number-range-right-border-radius-0': useAppend
-      }"
-    >
-      <el-input-number
-        :disabled="disabled"
-        placeholder="最小值"
-        @blur="handleBlur"
-        @focus="handleFocus"
-        @change="handleChangeMinValue"
-        v-model="minValue_"
-        v-bind="$attrs"
-        v-on="['update:minValue']"
-        :controls="false"
-      />
-      <div class="to">
-        <span>{{ to }}</span>
-      </div>
-      <el-input-number
-        :disabled="disabled"
-        placeholder="最大值"
-        @blur="handleBlur"
-        @focus="handleFocus"
-        @change="handleChangeMaxValue"
-        v-model="maxValue_"
-        v-bind="$attrs"
-        v-on="['update:maxValue']"
-        :controls="false"
-      />
-    </div>
-    <div :id="useAppend ? 'append' : ''" :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': useAppend }">
-      <slot name="append">
-        <!-- 后缀插槽 -->
-      </slot>
-    </div>
-  </div>
-</template>
 <script lang="ts" setup name="numberRange">
 // @ts-nocheck
 import { computed } from "vue"
@@ -235,6 +183,61 @@ const useAppend = computed(() => {
   return slots && slots.append ? true : false
 })
 </script>
+<template>
+  <div class="number-range-container">
+    <div
+      :id="usePrepend ? 'prepend' : ''"
+      :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': usePrepend }"
+    >
+      <slot name="prepend">
+        <!-- 前缀插槽 -->
+      </slot>
+    </div>
+    <div
+      class="number-range"
+      :class="{
+        'is-disabled': disabled,
+        'is-focus': isFocus,
+        'number-range-left-border-radius-0': usePrepend,
+        'number-range-right-border-radius-0': useAppend
+      }"
+    >
+      <el-input-number
+        :disabled="disabled"
+        placeholder="最小值"
+        @blur="handleBlur"
+        @focus="handleFocus"
+        @change="handleChangeMinValue"
+        v-model="minValue_"
+        v-bind="$attrs"
+        v-on="['update:minValue']"
+        :controls="false"
+      />
+      <div class="to">
+        <span>{{ to }}</span>
+      </div>
+      <el-input-number
+        :disabled="disabled"
+        placeholder="最大值"
+        @blur="handleBlur"
+        @focus="handleFocus"
+        @change="handleChangeMaxValue"
+        v-model="maxValue_"
+        v-bind="$attrs"
+        v-on="['update:maxValue']"
+        :controls="false"
+      />
+    </div>
+    <div
+      :id="useAppend ? 'append' : ''"
+      :class="{ 'slot-default': slotStyle === 'default', 'slot-pend': useAppend }"
+    >
+      <slot name="append">
+        <!-- 后缀插槽 -->
+      </slot>
+    </div>
+  </div>
+</template>
 <style lang="scss" scoped>
 .number-range-container {
   display: flex;

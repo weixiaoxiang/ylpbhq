@@ -1,31 +1,15 @@
-// 全局 CSS 变量
-@import "./variables.css";
+// // 全局 CSS 变量
+@use "./variables.css";
 // Transition
-@import "./transition.scss";
-// Element Plus
-@import "./element-plus.css";
-@import "./element-plus.scss";
+@use "./transition.scss";
+// // Element Plus
+@use "./element-plus.css" as elementPlus-Base;
+@use "./element-plus.scss" as elementPlus;
 // Mixins
-@import "./mixins.scss";
+@use "./mixins.scss";
 // tailwindcss
-@import "./tailwind.css";
-
-html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
-  color: var(--v3-body-text-color);
-  background-color: var(--v3-body-bg-color);
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
-    sans-serif;
-  @extend %scrollbar;
-  // overflow-x: hidden;
-  overflow: hidden;
-}
+@use "./tailwind.css";
+@use "./commonPage.scss";
 
 *,
 *::before,
@@ -44,28 +28,341 @@ a:hover {
 div:focus {
   outline: none;
 }
-// 字体引入
-@font-face {
-  font-family: "D-DIN";
-  src: url("~@/assets/font/D-DIN PRO/D-DIN-PRO-400-Regular.otf") format("otf");
-}
-@font-face {
-  font-family: "PingFang Regular";
-  src: url("~@/assets/font/PingFang Regular/PingFang Regular.ttf") format("ttf");
-}
-@font-face {
-  font-family: "优设标题黑";
-  src: url("~@/assets/font/优设标题黑/优设标题黑.ttf") format("ttf");
+html {
+  height: 100%;
 }
 
+body {
+  height: 100%;
+  color: var(--body-text-color);
+  background-color: var(--body-bg-color);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
+    sans-serif !important;
+  @extend %scrollbar;
+}
+// 隐藏X水平滚动条
+::-webkit-scrollbar:horizontal {
+  height: 0;
+  display: none;
+}
 #app {
-  // width: 100%;
-  // height: 100%;
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+.bigdata {
+  width: 1920px !important;
+  height: 1080px !important;
   transform-origin: 0 0;
 }
 // 业务页面几乎都应该在根元素上挂载 class="app-container"，以保持页面美观
 .app-container {
   padding: 10px;
+}
+
+/* 自定义NProgress样式 */
+#nprogress .bar {
+  background: var(--el-color-primary) !important; /* 设置加载栏颜色 */
+}
+#nprogress .spinner-icon {
+  border-top-color: var(--el-color-primary) !important; /* 设置Spinner的顶部颜色 */
+  border-left-color: var(--el-color-primary) !important; /* 设置Spinner的左侧颜色 */
+}
+
+// 字体引入
+// @font-face {
+//   font-family: "DDIN";
+//   src: url("~@/assets/font/D-DIN PRO/D-DIN-PRO-400-Regular.otf") format("otf");
+// }
+// 导出loading样式
+.exportLoading {
+  filter: grayscale(2);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+// 自定义el-select下拉框的样式1
+.custom-select-popper {
+  // #18242c
+  background: #204778 !important;
+  overflow: hidden;
+  /* 下拉框边框颜色 */
+  &.el-select__popper.el-popper {
+    border: 1px #204778 !important;
+  }
+  /* 下拉框padding颜色 */
+  .el-select-dropdown__wrap {
+    background-color: #204778;
+  }
+  /* 下拉框背景颜色 */
+  .el-select-dropdown__item {
+    background: #204778 !important;
+  }
+  /* 下拉框文字颜色 */
+  .el-select-dropdown__item {
+    color: #999;
+    font-weight: 500;
+  }
+  /* 下拉款选项悬停背景 */
+  .el-select-dropdown__item:hover {
+    background: #203f65 !important;
+  }
+  /* 下拉框被选中的文字颜色 */
+  .el-select-dropdown__item.is-selected {
+    // color: #1fa3df !important;
+    background: linear-gradient(to right, #0cc1c7, #feb47b) !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+  }
+  /* 倒三角样式 */
+  .el-popper__arrow::before {
+    border-color: #204778 !important;
+    background: #204778 !important;
+  }
+  //  下拉框为空时的样式
+  .el-select-dropdown__empty {
+    border-color: #204778 !important;
+    background: #204778 !important;
+  }
+}
+// 自定义el-date-picker下拉框的样式1
+.custom-datepicker-popper {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  // overflow: hidden;
+  // 修改切换日期的图标颜色
+  .el-picker-panel__icon-btn {
+    color: #e8ecf1 !important;
+  }
+  .el-date-picker.has-sidebar {
+    width: min-content;
+  }
+  .el-date-picker__header {
+    button,
+    .el-date-picker__header-label {
+      color: #fff !important;
+    }
+  }
+  .el-picker-panel__sidebar {
+    width: min-content !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: #204778;
+    border-right-color: #45648b;
+
+    .el-picker-panel__shortcut {
+      color: #ffffff;
+      padding-left: 0px;
+      font-size: 16px;
+    }
+  }
+  .el-picker-panel__sidebar + .el-picker-panel__body {
+    margin-left: 53px;
+  }
+  .el-picker-panel {
+    background-color: #204778 !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: #e8ecf1 !important;
+  }
+  .el-date-table th {
+    color: #b1bfd0 !important;
+    border-bottom: none;
+  }
+  .el-date-table td.next-month,
+  .el-date-table td.prev-month {
+    color: #5a779b !important;
+  }
+  .el-month-table td .el-date-table-cell__text {
+    color: #e8ecf1 !important;
+  }
+  .el-year-table td .el-date-table-cell__text {
+    color: #e8ecf1 !important;
+  }
+  .el-date-table td.current {
+    .el-date-table-cell__text {
+      background: #b3daff !important;
+      border-radius: 0 !important;
+      color: #237aa2 !important;
+      font-size: 14px !important;
+    }
+  }
+  // 修改选中范围的背景颜色
+  .el-date-table td.in-range .el-date-table-cell {
+    background: #18365a !important;
+  }
+  .el-date-table.is-week-mode .el-date-table__row.current .el-date-table-cell {
+    background: #18365a !important;
+  }
+  .el-date-table.is-week-mode .el-date-table__row:hover .el-date-table-cell {
+    background: #18365a !important;
+  }
+  .el-popper__arrow:before {
+    border-color: #204778 !important;
+  }
+  .el-popper__arrow:before {
+    background-color: #204778 !important;
+  }
+  // 修改日历左右的分割线颜色
+  .el-date-range-picker__content.is-left {
+    border-right-color: #18365a !important;
+  }
+  // 修改开始日期和开始时间输入框的样式
+  .el-input__wrapper {
+    background-color: #204778 !important;
+    color: #e8ecf1 !important;
+    box-shadow: 0 0 0 1px #18365a inset;
+    .el-input__inner {
+      color: #e8ecf1 !important;
+    }
+  }
+  .el-date-range-picker__time-header {
+    border-bottom-color: #18365a !important;
+  }
+  .el-date-picker__time-header {
+    border-bottom-color: #18365a !important;
+  }
+  // 修改底部的清空和确定部分的样式
+  .el-picker-panel__footer {
+    background-color: #204778 !important;
+    border-top-color: #18365a !important;
+    .el-button {
+      background-color: #18365a !important;
+      border: none !important;
+      color: #e8ecf1 !important;
+    }
+
+    .el-button:hover {
+      background-color: #18365a !important;
+      border: none !important;
+    }
+  }
+}
+// 自定义el-time-picker下拉框的样式1
+.custom-timepicker-popper {
+  background-color: #08203b !important;
+  border: 1px solid #304868 !important;
+  .el-picker-panel {
+    background-color: #204778 !important;
+    box-shadow: none !important;
+    color: #e8ecf1 !important;
+  }
+  // 修改时间面板背景
+  .el-time-panel {
+    background-color: #08203b;
+    border-color: #304868;
+  }
+  // 修改时间面板内容背景，默认有白色边框
+  .el-time-panel__content {
+    border: 1px solid #08203b;
+  }
+  // 上下修改分隔线颜色，默认白色的
+  .el-time-panel__content::after,
+  .el-time-panel__content::before {
+    border: none;
+  }
+  // 修改时间数字颜色
+  .el-time-spinner__item {
+    color: #fff;
+    // 修改时间数字悬停背景
+    &:hover:not(.disabled):not(.active) {
+      background: #194570;
+    }
+    // 修改当前激活项的字体样式
+    &.is-active {
+      color: #fff !important; // 使用亮蓝色
+      background-color: #15395d;
+    }
+  }
+  // 修改底部按钮样式
+  .el-time-panel__footer {
+    background-color: #204778;
+    border-top-color: #08203b;
+
+    .el-time-panel__btn {
+      color: #beccdc;
+      // 修改确定按钮的颜色
+      &.confirm {
+        color: #409eff;
+      }
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}
+// 自定义el-autocomplete下拉框的样式1
+.custom-autocomplete-popper {
+  background: #0c284d !important;
+  border: 1px solid #304868 !important;
+  // 修改滚动条样式
+  .el-scrollbar {
+    background: transparent;
+  }
+  // 修改下拉框的样式
+  .el-autocomplete-suggestion__list {
+    li {
+      color: #aab4c1;
+      &:hover,
+      &.highlighted {
+        background-color: #1a3c6b !important;
+        color: #fff;
+      }
+    }
+  }
+  // 添加三角形样式
+  .el-popper__arrow::before {
+    background: #0c284d !important;
+    border-color: #304868 !important;
+  }
+}
+
+// 地图#map默认添加background
+#map {
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: url("@/assets/images/patrol/map-bg.svg") no-repeat center center / 70% 70%;
+    transform-origin: center;
+  }
+  // 修改地图覆盖层的z-index
+  .ol-overlaycontainer-stopevent {
+    z-index: 10 !important;
+  }
+}
+// 定义拉丁文文本样式
+.latin-text {
+  font-style: italic;
+}
+.beautify-scrollbar {
+  // 整个滚动条
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    // width: 0px;
+    // height: 0px;
+  }
+  // 滚动条上的滚动滑块
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #90939955;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #90939977;
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: #90939999;
+  }
+  // 当同时有垂直滚动条和水平滚动条时交汇的部分
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
 }

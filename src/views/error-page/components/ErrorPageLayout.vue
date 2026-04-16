@@ -1,9 +1,13 @@
+<script setup lang="ts">
+const configStore = useConfigStore()
+const { defaultRedirect } = storeToRefs(configStore)
+</script>
 <template>
   <div class="error-page">
     <div class="error-page-svg">
       <slot />
     </div>
-    <router-link to="/">
+    <router-link :to="defaultRedirect">
       <el-button type="primary">回到首页</el-button>
     </router-link>
   </div>

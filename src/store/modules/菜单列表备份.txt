@@ -1,0 +1,498 @@
+// const list = [
+      //   {
+      //     checked: true,
+      //     href: "/researchManagement",
+      //     icon: "科研管理_scientific",
+      //     id: 1,
+      //     pId: 0,
+      //     title: "科研管理",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/researchManagement/backgroundResources",
+      //         icon: "本底资源_natural-mode",
+      //         id: "1-1",
+      //         pId: 1,
+      //         title: "本底资源",
+      //         children: [
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/backgroundResources/animalsAndPlants",
+      //             icon: "动植物_animal",
+      //             id: "1-1-1",
+      //             pId: "1-1",
+      //             title: "动植物监测"
+      //           },
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/backgroundResources/oldAndFamousTrees",
+      //             icon: "古树名木_tree",
+      //             id: "1-1-2",
+      //             pId: "1-1",
+      //             title: "古树名木"
+      //           }
+      //         ]
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/researchManagement/researchMonitoring",
+      //         icon: "科研监测_scientific-monitoring",
+      //         id: "1-2",
+      //         pId: 1,
+      //         title: "科研监测",
+      //         children: [
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/researchMonitoring/ecologicalMonitoring",
+      //             icon: "生态监测_ecological-monitoring",
+      //             id: "1-2-1",
+      //             pId: "1-2",
+      //             title: "生态监测"
+      //           },
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/researchMonitoring/captureVideoMonitoring",
+      //             icon: "抓拍视频监测_capture-video-monitoring",
+      //             id: "1-2-2",
+      //             pId: "1-2",
+      //             title: "抓拍视频监测"
+      //           },
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/researchMonitoring/diseaseAndPestMonitoring",
+      //             icon: "病虫害监测_disease-pest-monitoring",
+      //             id: "1-2-3",
+      //             pId: "1-2",
+      //             title: "病虫害监测"
+      //           },
+      //           {
+      //             checked: true,
+      //             href: "/researchManagement/researchMonitoring/infraredCameraMonitoring",
+      //             icon: "红外相机监测_infrared-camera-monitoring",
+      //             id: "1-2-4",
+      //             pId: "1-2",
+      //             title: "红外相机监测"
+      //           }
+      //         ]
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/patrol",
+      //     icon: "智能巡护_intelligent-patrol",
+      //     id: 4,
+      //     pId: 0,
+      //     title: "智能巡护",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/patrol/survey",
+      //         icon: "巡护概况_patrol-overview",
+      //         id: "4-1",
+      //         pId: 4,
+      //         title: "巡护概况"
+      //       },
+      //       // {
+      //       //   checked: true,
+      //       //   href: "/patrol/statistics",
+      //       //   icon: "",
+      //       //   id: "4-2",
+      //       //   pId: 4,
+      //       //   title: "巡护统计"
+      //       // },
+      //       {
+      //         checked: true,
+      //         href: "/patrol/record",
+      //         icon: "巡护记录_patrol-record",
+      //         id: "4-3",
+      //         pId: 4,
+      //         title: "巡护记录"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/patrol/task",
+      //         icon: "任务管理_task-management",
+      //         id: "4-4",
+      //         pId: 4,
+      //         title: "任务管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/patrol/taskroute",
+      //         icon: "任务路线管理_task-route-management",
+      //         id: "4-5",
+      //         pId: 4,
+      //         title: "任务路线管理"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/tourism",
+      //     icon: "生态旅游_ecological-tourism",
+      //     id: 5,
+      //     pId: 0,
+      //     title: "生态旅游",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/tourism/briefIntroduction",
+      //         icon: "保护区简介_protected-area-introduction",
+      //         id: "5-1",
+      //         pId: 5,
+      //         title: "保护区简介"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourism/historicalEvolution",
+      //         icon: "历史沿革_historical-evolution",
+      //         id: "5-2",
+      //         pId: 5,
+      //         title: "历史沿革"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourism/naturalLandscape",
+      //         icon: "自然景观_natural-landscape",
+      //         id: "5-3",
+      //         pId: 5,
+      //         title: "自然景观"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourism/naturalResources",
+      //         icon: "自然资源_natural-resources",
+      //         id: "5-4",
+      //         pId: 5,
+      //         title: "自然资源"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourism/oldAndFamousTrees",
+      //         icon: "古树名木_tree",
+      //         id: "5-6",
+      //         pId: 5,
+      //         title: "古树名木"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourismOther/ScienceEducation",
+      //         icon: "科普宣教_brain",
+      //         id: "5-7",
+      //         pId: 5,
+      //         title: "科普宣教"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/tourismOther/CommunityBuilding",
+      //         icon: "社区共建_community-building",
+      //         id: "5-8",
+      //         pId: 5,
+      //         title: "社区共建"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/aiRemoteSensing",
+      //     icon: "AI+遥感_ai-remote-sensing",
+      //     id: 7,
+      //     pId: 0,
+      //     title: "AI+遥感",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/aiRemoteSensing/onemap",
+      //         icon: "AI+遥感一张图_one-map",
+      //         id: "7-1",
+      //         pId: 7,
+      //         title: "一张图"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/aiRemoteSensing/forestResource",
+      //         icon: "森林资源_forest",
+      //         id: "7-2",
+      //         pId: 7,
+      //         title: "森林资源"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/aiRemoteSensing/thematic",
+      //         icon: "专题地图_thematic-map",
+      //         id: "7-3",
+      //         pId: 7,
+      //         title: "专题地图"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/aiRemoteSensing/landType",
+      //         icon: "地类对比_land-type-comparison",
+      //         id: "7-4",
+      //         pId: 7,
+      //         title: "地类对比"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/geologicalDisaster",
+      //     icon: "防灾减灾_disaster-prevention",
+      //     id: 6,
+      //     pId: 0,
+      //     title: "防灾减灾",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/geologicalDisaster/map",
+      //         icon: "防灾减灾一张图_one-map",
+      //         id: "6-1",
+      //         pId: 6,
+      //         title: "一张图"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/forestResources",
+      //     icon: "森林资源_forest-resources",
+      //     id: 2,
+      //     pId: 0,
+      //     title: "森林资源",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/forestResources/forestOneMap",
+      //         icon: "森林资源一张图_one-map",
+      //         id: "2-1",
+      //         pId: 2,
+      //         title: " 一张图 "
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/forestResources/repairPlan",
+      //         icon: "生态修复规划_ecological-repair-planning",
+      //         id: "2-2",
+      //         pId: 2,
+      //         title: "生态修复规划"
+      //       },
+
+      //       {
+      //         checked: true,
+      //         href: "/forestResources/repairStaffing",
+      //         icon: "生态修复编制_ecological-repair-staffing",
+      //         id: "2-3",
+      //         pId: 2,
+      //         title: "生态修复编制"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/emergencyCommand",
+      //     icon: "应急指挥_emergency-command",
+      //     id: 3,
+      //     pId: 0,
+      //     title: "应急指挥",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/emergencyCommand/index",
+      //         icon: "综合态势分析_comprehensive-situation-analysis",
+      //         id: "3-1",
+      //         pId: 3,
+      //         title: "综合态势分析"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/bigDataAnalysis",
+      //     icon: "大数据分析_big-data-analysis",
+      //     id: 8,
+      //     pId: 0,
+      //     title: "大数据分析",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/bigDataAnalysis/dataSummary",
+      //         icon: "数据概括_data-summary",
+      //         id: "8-1",
+      //         pId: 8,
+      //         title: "数据概括"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/bigDataAnalysis/protectedAreaOverview",
+      //         icon: "保护区概况_protected-area-overview",
+      //         id: "8-2",
+      //         pId: 8,
+      //         title: "保护区概况"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/bigDataAnalysis/ecologicalMonitoringOneMap",
+      //         icon: "生态监测_ecological",
+      //         id: "8-3",
+      //         pId: 8,
+      //         title: "生态监测"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/bigDataAnalysis/captureVideoOneMap",
+      //         icon: "抓拍视频_capture-video",
+      //         id: "8-4",
+      //         pId: 8,
+      //         title: "抓拍视频"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/bigDataAnalysis/intelligentPatrol",
+      //         icon: "智能巡护_intelligent",
+      //         id: "8-5",
+      //         pId: 8,
+      //         title: "智能巡护"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     checked: true,
+      //     href: "/system",
+      //     icon: "系统管理_system-management",
+      //     id: 9,
+      //     pId: 0,
+      //     title: "系统管理",
+      //     children: [
+      //       {
+      //         checked: true,
+      //         href: "/system/home",
+      //         icon: "首页_system-management-home",
+      //         id: "9-0",
+      //         pId: 9,
+      //         title: "管理首页",
+      //         affix: true
+      //       },
+        // {
+  //   "id": "10-1",
+  //   "component": "/views/system/home/index",
+  //   "componentName": "SystemHome",
+  //   "affix": true,
+  //   "createTime": "2025-01-07 15:21:37",
+  //   "createUserId": 1,
+  //   "effective": true,
+  //   "icon": "首页_system-management-home",
+  //   "name": "管理首页",
+  //   "pId": "10",
+  //   "path": "home",
+  //   "perm": null,
+  //   "redirect": "",
+  //   "remark": "",
+  //   "sort": 1,
+  //   "treePath": "",
+  //   "type": 2,
+  //   "updateTime": "2025-01-07 15:21:28",
+  //   "updateUserId": null,
+  //   "visible": true
+  // },
+      //       {
+      //         checked: true,
+      //         href: "/system/user",
+      //         icon: "用户_user",
+      //         id: "9-1",
+      //         pId: 9,
+      //         title: "用户管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/role",
+      //         icon: "角色_permissions",
+      //         id: "9-2",
+      //         pId: 9,
+      //         title: "角色管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/organize",
+      //         icon: "机构管理_category-management",
+      //         id: "9-3",
+      //         pId: 9,
+      //         title: "机构管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/menu",
+      //         icon: "菜单管理_application-menu",
+      //         id: "9-4",
+      //         pId: 9,
+      //         title: "菜单管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/loginLog",
+      //         icon: "登录日志_log",
+      //         id: "9-5",
+      //         pId: 9,
+      //         title: "登录日志"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/operationLog",
+      //         icon: "操作日志_log",
+      //         id: "9-6",
+      //         pId: 9,
+      //         title: "操作日志"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/layerManagement",
+      //         icon: "图层管理_layers",
+      //         id: "9-7",
+      //         pId: 9,
+      //         title: "图层管理",
+      //         children: [
+      //           {
+      //             checked: true,
+      //             href: "/system/layerManagement/maintain",
+      //             icon: "图层维护_tool",
+      //             id: "9-7-1",
+      //             pId: "9-7",
+      //             title: "图层维护"
+      //           },
+      //           {
+      //             checked: true,
+      //             href: "/system/layerManagement/config",
+      //             icon: "图层配置_tool",
+      //             id: "9-7-2",
+      //             pId: "9-7",
+      //             title: "图层配置"
+      //           }
+      //         ]
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/popularScienceEducation",
+      //         icon: "科普宣教_brain",
+      //         id: "9-8",
+      //         pId: 9,
+      //         title: "科普宣教"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/imageManage",
+      //         icon: "影像管理_image",
+      //         id: "9-9",
+      //         pId: 9,
+      //         title: "影像管理"
+      //       },
+      //       {
+      //         checked: true,
+      //         href: "/system/localSurvey",
+      //         icon: "本底资源_natural-mode",
+      //         id: "9-10",
+      //         pId: 9,
+      //         title: "本底资源"
+      //       }
+      //     ]
+      //   }
+      // ]

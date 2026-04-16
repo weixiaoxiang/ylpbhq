@@ -4,6 +4,6 @@ export const getLocal = (key: string) => {
 export const setLocal = (item: any, key: string) => {
   localStorage.setItem(key, item)
 }
-export const removeToken = (key: string) => {
+export const removeLocal = (key: string) => {
   localStorage.removeItem(key)
 }

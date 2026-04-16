@@ -2,15 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="/app-loading.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="/favicon.ico"
+    />
+    <link
+      rel="stylesheet"
+      href="/app-loading.css"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title><%= VITE_APP_TITLE %></title>
+    <script src="/h5player/h5player.min.js"></script>
+    <script src="/easyplayer/EasyPlayer-pro.js"></script>
+    <script src="/liveplayer-v3/liveplayer-lib.min.js"></script>
+    <script src="/jessibuca/jessibuca.js"></script>
+    <script src="/tour/tour.js"></script>
+    <!-- 引入cesium -->
+    <link
+      rel="stylesheet"
+      href="/Cesium/Widgets/widgets.css"
+    />
+    <script
+      charset="utf-8"
+      type="text/javascript"
+      src="/Cesium/Cesium.js"
+    ></script>
+    <script>
+      Cesium.Ion.defaultAccessToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NGUwMDc4OS04NDYyLTRhZTMtOWI5MS0wMTA2YTZiMzEyMzEiLCJpZCI6MjkyMTQsImlhdCI6MTYyMjYyMjAzN30.CfvlpVMfXsWwJfYXsKkF5-ZX4EQl7GPl6KpnZWlGDpM"
+    </script>
   </head>
   <body>
     <div id="app">
       <div id="app-loading"></div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+    <script
+      type="module"
+      src="/src/main.ts"
+    ></script>
   </body>
 </html>

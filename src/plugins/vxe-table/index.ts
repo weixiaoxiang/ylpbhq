@@ -43,7 +43,7 @@ VXETable.setConfig({
     perfect: false,
     pageSize: 10,
     pagerCount: 7,
-    pageSizes: [10, 20, 50],
+    pageSizes: [10,15, 20, 50],
     layouts: ["Total", "PrevJump", "PrevPage", "Number", "NextPage", "NextJump", "Sizes", "FullJump"]
   },
   modal: {

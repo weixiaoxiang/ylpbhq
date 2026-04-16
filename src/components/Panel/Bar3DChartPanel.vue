@@ -4,11 +4,10 @@
     class="chart-panel"
     id="chart-panel"
     :style="style"
-  >
-    <EchartsEmpty v-if="!chart" />
-  </div>
+  ></div>
+  <EmptyData v-show="!data" />
 </template>
-
+<!-- 柱状图-3D -->
 <script lang="ts" setup>
 // @ts-nocheck
 /* eslint-disable */
@@ -18,6 +17,9 @@ const proxy = getCurrentInstance()!.proxy as any
 interface Props {
   data?: any
   style?: any
+  leftColors?: any
+  rightColors?: any
+  topColors?: any
 }
 const props = withDefaults(defineProps<Props>(), {
   style: () => {
@@ -25,7 +27,10 @@ const props = withDefaults(defineProps<Props>(), {
       width: "100%",
       height: "100%"
     }
-  }
+  },
+  leftColors: () => ["#01a1fb", "#183551"],
+  rightColors: () => ["#01b0fb", "#163a59"],
+  topColors: () => ["#0071d9", "#00b0fe"]
 })
 const chartPanelRef = ref("")
 let chart: any = null
@@ -48,6 +53,7 @@ const setPloygon = () => {
   const maxBarWidth = 12
   const minBarWidth = 2
   barWidth = Math.max(minBarWidth, Math.min(maxBarWidth, barWidth))
+
   const CubeLeft = proxy.$echarts.graphic.extendShape({
     shape: {
       x: 0,
@@ -96,7 +102,6 @@ const setPloygon = () => {
 const setOption = () => {
   setPloygon()
   const response = props.data
-  const color = ["#faba5a", "#7ecffd", "#01B3FF", "#9747FF"]
   let xAxis: any = [],
     data: any = []
   const legend: any = []
@@ -117,10 +122,15 @@ const setOption = () => {
         type: "shadow"
       },
       textStyle: {
-        color: "#fff"
+        color: "#fff",
+        fontSize: 12
       },
       formatter: (params: any) => {
-        let str = `${params[0].name}（${unit}） <br>`
+        let str = `${params[0].name} <br>`
+        params.forEach((param: any) => {
+          const { seriesName, value } = param
+          str += `${value}(${unit})`
+        })
         return str
       }
     },
@@ -159,8 +169,8 @@ const setOption = () => {
         axisLabel: {
           margin: 10,
           color: "#c3cdd7",
-          fontSize: 14,
-          interval: 0
+          fontSize: 14
+          // interval: 0
         }
       }
     ],
@@ -213,11 +223,11 @@ const setOption = () => {
                   fill: new proxy.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
                     {
                       offset: 0,
-                      color: "#01a1fb"
+                      color: props.leftColors[0]
                     },
                     {
                       offset: 1,
-                      color: hexToRgba("#183551", 0.3)
+                      color: props.leftColors[1]
                     }
                   ])
                 }
@@ -236,11 +246,11 @@ const setOption = () => {
                   fill: new proxy.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
                     {
                       offset: 0,
-                      color: "#01b0fb"
+                      color: props.rightColors[0]
                     },
                     {
                       offset: 1,
-                      color: hexToRgba("#163a59", 0.7)
+                      color: props.rightColors[1]
                     }
                   ])
                 }
@@ -259,11 +269,11 @@ const setOption = () => {
                   fill: new proxy.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
                     {
                       offset: 0,
-                      color: "#0071d9"
+                      color: props.topColors[0]
                     },
                     {
                       offset: 1,
-                      color: hexToRgba("#00b0fe", 0.8)
+                      color: props.topColors[1]
                     }
                   ])
                 }
@@ -273,30 +283,65 @@ const setOption = () => {
         },
         data: data
       }
-    ]
+    ],
+    animation: true,
+    animationDurationUpdate: 2000
   }
-  chart.setOption(options)
+  chart.setOption(options, { lazyUpdate: true })
+  timer && clearInterval(timer)
+  startTooltipAnimation()
 }
-watch(
-  () => props.data,
-  () => {
-    if (!chart) {
-      initChart()
-    }
-    setOption()
-  }
-)
-onMounted(() => {
-  initChart()
-  setOption()
-})
-onBeforeUnmount(() => {
+let timer: any = null,
+  currentIndex: any = 0
+const startTooltipAnimation = () => {
+  if (!chart) return
+  const dataLen = chart.getOption().series[0].data.length
+  chart.dispatchAction({
+    type: "showTip",
+    seriesIndex: 0,
+    dataIndex: currentIndex
+  })
+  currentIndex = (currentIndex + 1) % dataLen
+  timer = setInterval(() => {
+    chart.dispatchAction({
+      type: "showTip",
+      seriesIndex: 0,
+      dataIndex: currentIndex
+    })
+    currentIndex = (currentIndex + 1) % dataLen
+  }, 3000) // 每3秒移动一次
+}
+
+// 销毁chart
+const disposeChart = () => {
   if (chart) {
     window.removeEventListener("resize", resize)
     chart.dispose()
     chart = null
-    chartPanelRef.value = ""
   }
+  timer && clearInterval(timer)
+}
+watch(
+  () => props.data,
+  (val) => {
+    if (val) {
+      // 完全销毁并重新创建图表
+      disposeChart()
+      initChart()
+      setOption()
+    } else {
+      disposeChart()
+    }
+  }
+)
+onMounted(() => {
+  if (props.data) {
+    initChart()
+    setOption()
+  }
+})
+onBeforeUnmount(() => {
+  disposeChart()
 })
 </script>
 

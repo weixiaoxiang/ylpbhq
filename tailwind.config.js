@@ -13,9 +13,6 @@ export default {
       },
       fontFamily: {
         sans: ["微软雅黑!important", "sans-serif!important"],
-        DDIN: ["D-DIN!important"],
-        PingFang: ["PingFang Regular!important"],
-        youshe: ["优设标题黑!important"]
       },
       fontSize: {
         12: ["12px", { lineHeight: "2em" }]

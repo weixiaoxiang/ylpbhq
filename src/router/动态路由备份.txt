@@ -1,0 +1,522 @@
+// {
+  //   path: "/login",
+  //   component: () => import("@/views/login/index.vue")
+  // },
+  // {
+  //   path: "/",
+  //   component: Layouts,
+  //   meta: {
+  //     title: "项目根路由"
+  //   },
+  //   redirect: "/patrol",
+  //   children: [
+  //     {
+  //       path: "/patrol",
+  //       name: "Patrol",
+  //       meta: {
+  //         title: "智能巡护"
+  //       },
+  //       component: () => import("@/views/patrol/index.vue"),
+  //       redirect: "/patrol/survey",
+  //       children: [
+  //         {
+  //           path: "survey",
+  //           component: () => import("@/views/patrol/survey/index.vue"),
+  //           name: "PatrolSurvey",
+  //           meta: {
+  //             title: "巡护概况"
+  //           }
+  //         },
+  //         {
+  //           path: "statistics",
+  //           component: () => import("@/views/patrol/statistics/index.vue"),
+  //           name: "PatrolStatistics",
+  //           meta: {
+  //             title: "巡护统计"
+  //           }
+  //         },
+  //         {
+  //           path: "record",
+  //           component: () => import("@/views/patrol/record/index.vue"),
+  //           name: "PatrolRecord",
+  //           meta: {
+  //             title: "巡护记录"
+  //           }
+  //         },
+  //         {
+  //           path: "task",
+  //           component: () => import("@/views/patrol/task/index.vue"),
+  //           name: "PatrolTask",
+  //           meta: {
+  //             title: "任务管理"
+  //           }
+  //         },
+  //         {
+  //           path: "taskroute",
+  //           component: () => import("@/views/patrol/taskroute/index.vue"),
+  //           name: "PatrolTaskroute",
+  //           meta: {
+  //             title: "任务路线管理"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/researchManagement",
+  //       name: "ResearchManagement",
+  //       meta: {
+  //         title: "科研管理"
+  //       },
+  //       children: [
+  //         {
+  //           path: "backgroundResources",
+  //           component: () => import("@/views/researchManagement/backgroundResources/index.vue"),
+  //           name: "BackgroundResources",
+  //           meta: {
+  //             title: "本底资源"
+  //           },
+  //           redirect: "/researchManagement/backgroundResources/animalsAndPlants",
+  //           children: [
+  //             {
+  //               path: "animalsAndPlants",
+  //               component: () => import("@/views/researchManagement/backgroundResources/animalsAndPlants/index.vue"),
+  //               name: "AnimalsAndPlants",
+  //               meta: {
+  //                 title: "动植物监测"
+  //               }
+  //             },
+  //             {
+  //               path: "oldAndFamousTrees",
+  //               component: () => import("@/views/researchManagement/backgroundResources/oldAndFamousTrees/index.vue"),
+  //               name: "ResearchManagementOldAndFamousTrees", // 避免与生态旅游中的古树名木路由名称冲突
+  //               meta: {
+  //                 title: "古树名木"
+  //               }
+  //             }
+  //           ]
+  //         },
+  //         {
+  //           path: "researchMonitoring",
+  //           name: "ResearchMonitoring",
+  //           meta: {
+  //             title: "科研监测"
+  //           },
+  //           component: () => import("@/views/researchManagement/researchMonitoring/index.vue"),
+  //           redirect: "/researchManagement/researchMonitoring/ecologicalMonitoring",
+  //           children: [
+  //             {
+  //               path: "ecologicalMonitoring",
+  //               component: () => import("@/views/researchManagement/researchMonitoring/ecologicalMonitoring/index.vue"),
+  //               name: "EcologicalMonitoring",
+  //               meta: {
+  //                 title: "生态监测"
+  //               }
+  //             },
+  //             {
+  //               path: "captureVideoMonitoring",
+  //               component: () =>
+  //                 import("@/views/researchManagement/researchMonitoring/captureVideoMonitoring/index.vue"),
+  //               name: "CaptureVideoMonitoring",
+  //               meta: {
+  //                 title: "抓拍视频监测"
+  //               }
+  //             },
+  //             {
+  //               path: "diseaseAndPestMonitoring",
+  //               component: () =>
+  //                 import("@/views/researchManagement/researchMonitoring/diseaseAndPestMonitoring/index.vue"),
+  //               name: "DiseaseAndPestMonitoring",
+  //               meta: {
+  //                 title: "病虫害监测"
+  //               }
+  //             },
+  //             {
+  //               path: "infraredCameraMonitoring",
+  //               component: () =>
+  //                 import("@/views/researchManagement/researchMonitoring/infraredCameraMonitoring/index.vue"),
+  //               name: "InfraredCameraMonitoring",
+  //               meta: {
+  //                 title: "红外相机监测"
+  //               }
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/geologicalDisaster",
+  //       name: "GeologicalDisaster",
+  //       meta: {
+  //         title: "防灾减灾"
+  //       },
+  //       children: [
+  //         {
+  //           path: "map",
+  //           component: () => import("@/views/geologicalDisaster/onemap/index.vue"),
+  //           name: "Map",
+  //           meta: {
+  //             title: "一张图"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/bigDataAnalysis",
+  //       name: "BigDataAnalysis",
+  //       meta: {
+  //         title: "大数据分析"
+  //       },
+  //       children: [
+  //         {
+  //           path: "captureVideoOneMap",
+  //           component: () => import("@/views/bigDataAnalysis/captureVideoOneMap/index.vue"),
+  //           name: "CaptureVideoOneMap",
+  //           meta: {
+  //             title: "抓拍视频"
+  //           }
+  //         },
+  //         {
+  //           path: "ecologicalMonitoringOneMap",
+  //           component: () => import("@/views/bigDataAnalysis/ecologicalMonitoringOneMap/index.vue"),
+  //           name: "EcologicalMonitoringOneMap",
+  //           meta: {
+  //             title: "生态监测"
+  //           }
+  //         },
+  //         {
+  //           path: "dataSummary",
+  //           component: () => import("@/views/bigDataAnalysis/dataSummary/index.vue"),
+  //           name: "DataSummary",
+  //           meta: {
+  //             title: "数据概括"
+  //           }
+  //         },
+  //         {
+  //           path: "protectedAreaOverview",
+  //           component: () => import("@/views/bigDataAnalysis/protectedAreaOverview/index.vue"),
+  //           name: "ProtectedAreaOverview",
+  //           meta: {
+  //             title: "保护区概况"
+  //           }
+  //         },
+  //         {
+  //           path: "intelligentPatrol",
+  //           component: () => import("@/views/bigDataAnalysis/intelligentPatrol/index.vue"),
+  //           name: "IntelligentPatrol",
+  //           meta: {
+  //             title: "智能巡护"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/aiRemoteSensing",
+  //       name: "AiRemoteSensing",
+  //       meta: {
+  //         title: "AI+遥感"
+  //       },
+  //       children: [
+  //         {
+  //           path: "onemap",
+  //           component: () => import("@/views/aiRemoteSensing/onemap/index.vue"),
+  //           name: "Onemap",
+  //           meta: {
+  //             title: "一张图"
+  //           }
+  //         },
+  //         {
+  //           path: "forestResource",
+  //           component: () => import("@/views/aiRemoteSensing/forestResource/index.vue"),
+  //           name: "AIForestResource",
+  //           meta: {
+  //             title: "森林资源"
+  //           }
+  //         },
+  //         {
+  //           path: "thematic",
+  //           component: () => import("@/views/aiRemoteSensing/thematic/index.vue"),
+  //           name: "Thematic",
+  //           meta: {
+  //             title: "专题地图"
+  //           }
+  //         },
+  //         {
+  //           path: "landType",
+  //           component: () => import("@/views/aiRemoteSensing/landType/index.vue"),
+  //           name: "LandType",
+  //           meta: {
+  //             title: "地类对比"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/emergencyCommand",
+  //       name: "EmergencyCommand",
+  //       meta: {
+  //         title: "应急指挥"
+  //       },
+  //       children: [
+  //         {
+  //           path: "index",
+  //           component: () => import("@/views/EmergencyCommand/index.vue"),
+  //           name: "ComprehensiveSituation",
+  //           meta: {
+  //             title: "综合态势分析"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/forestResources",
+  //       name: "ForestResources",
+  //       meta: {
+  //         title: "森林资源"
+  //       },
+  //       component: () => import("@/views/forestResources/index.vue"),
+  //       redirect: "/forestResources/forestOneMap",
+  //       children: [
+  //         {
+  //           path: "forestOneMap",
+  //           component: () => import("@/views/forestResources/forestOneMap/index.vue"),
+  //           name: "ForestOneMap",
+  //           meta: {
+  //             title: " 一张图 "
+  //           }
+  //         },
+  //         {
+  //           path: "repairPlan",
+  //           component: () => import("@/views/forestResources/repairPlan/index.vue"),
+  //           name: "RepairPlan",
+  //           meta: {
+  //             title: "生态修复规划"
+  //           }
+  //         },
+  //         {
+  //           path: "repairStaffing",
+  //           component: () => import("@/views/forestResources/repairStaffing/index.vue"),
+  //           name: "RepairStaffing",
+  //           meta: {
+  //             title: "生态修复编制"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: "/tourismOther/ScienceEducation",
+  //       name: "ScienceEducation",
+  //       meta: {
+  //         title: "科普宣教"
+  //       },
+  //       component: () => import("@/views/tourism/ScienceEducation/index.vue")
+  //     },
+  //     {
+  //       path: "/tourismOther/CommunityBuilding",
+  //       name: "CommunityBuilding",
+  //       meta: {
+  //         title: "社区共建"
+  //       },
+  //       component: () => import("@/views/tourism/CommunityBuilding/index.vue")
+  //     }
+  //     // {
+  //     //   path: "/tourismOther",
+  //     //   name: "TourismOther",
+  //     //   meta: {
+  //     //     title: "生态旅游"
+  //     //   },
+  //     //   children: [
+  //     //     {
+  //     //       path: "/tourismOther/ScienceEducation",
+  //     //       name: "ScienceEducation",
+  //     //       meta: {
+  //     //         title: "科普宣教"
+  //     //       },
+  //     //       component: () => import("@/views/tourism/ScienceEducation/index.vue")
+  //     //     },
+  //     //     {
+  //     //       path: "/tourismOther/CommunityBuilding",
+  //     //       name: "CommunityBuilding",
+  //     //       meta: {
+  //     //         title: "社区共建"
+  //     //       },
+  //     //       component: () => import("@/views/tourism/CommunityBuilding/index.vue")
+  //     //     }
+  //     //   ]
+  //     // }
+  //   ]
+  // },
+  // {
+  //   path: "/tourism",
+  //   name: "Tourism",
+  //   meta: {
+  //     title: "生态旅游"
+  //   },
+  //   component: () => import("@/views/tourism/index.vue"),
+  //   redirect: "/tourism/briefIntroduction",
+  //   children: [
+  //     {
+  //       path: "/tourism/briefIntroduction",
+  //       name: "BriefIntroduction",
+  //       meta: {
+  //         title: "保护区简介"
+  //       },
+  //       component: () => import("@/views/tourism/briefIntroduction/index.vue")
+  //     },
+  //     {
+  //       path: "/tourism/historicalEvolution",
+  //       name: "HistoricalEvolution",
+  //       meta: {
+  //         title: "历史沿革"
+  //       },
+  //       component: () => import("@/views/tourism/historicalEvolution/index.vue")
+  //     },
+  //     {
+  //       path: "/tourism/naturalLandscape",
+  //       name: "NaturalLandscape",
+  //       meta: {
+  //         title: "自然景观"
+  //       },
+  //       component: () => import("@/views/tourism/naturalLandscape/index.vue")
+  //     },
+  //     {
+  //       path: "/tourism/naturalResources",
+  //       name: "NaturalResources",
+  //       meta: {
+  //         title: "自然资源"
+  //       },
+  //       component: () => import("@/views/tourism/naturalResources/index.vue")
+  //     },
+  //     {
+  //       path: "/tourism/oldAndFamousTrees",
+  //       name: "TourismOldAndFamousTrees", // 避免与科研管理中的古树名木路由名称冲突
+  //       meta: {
+  //         title: "古树名木"
+  //       },
+  //       component: () => import("@/views/tourism/oldAndFamousTrees/index.vue")
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: "/system",
+  //   name: "System",
+  //   meta: {
+  //     title: "系统管理"
+  //   },
+  //   component: () => import("@/views/system/index.vue"),
+  //   redirect: "/system/user",
+  //   children: [
+  //     {
+  //       path: "/system/home",
+  //       component: () => import("@/views/system/home/index.vue"),
+  //       name: "SystemHome",
+  //       meta: {
+  //         title: "系统管理首页"
+  //       }
+  //     },
+  //     {
+  //       path: "/system/user",
+  //       component: () => import("@/views/system/user/index.vue"),
+  //       name: "SystemUser",
+  //       meta: {
+  //         title: "用户管理"
+  //       }
+  //     },
+  //     {
+  //       path: "/system/role",
+  //       component: () => import("@/views/system/role/index.vue"),
+  //       name: "SystemRole",
+  //       meta: {
+  //         title: "角色管理"
+  //       }
+  //     },
+  //     // organize
+  //     {
+  //       path: "/system/organize",
+  //       component: () => import("@/views/system/organize/index.vue"),
+  //       name: "SystemOrganize",
+  //       meta: {
+  //         title: "机构管理"
+  //       }
+  //     },
+  //     // menu
+  //     {
+  //       path: "/system/menu",
+  //       component: () => import("@/views/system/menu/index.vue"),
+  //       name: "SystemMenu",
+  //       meta: {
+  //         title: "菜单管理"
+  //       }
+  //     },
+  //     // loginLog
+  //     {
+  //       path: "/system/loginLog",
+  //       component: () => import("@/views/system/loginLog/index.vue"),
+  //       name: "SystemLoginLog",
+  //       meta: {
+  //         title: "登录日志"
+  //       }
+  //     },
+  //     // operationLog
+  //     {
+  //       path: "/system/operationLog",
+  //       component: () => import("@/views/system/operationLog/index.vue"),
+  //       name: "SystemOperationLog",
+  //       meta: {
+  //         title: "操作日志"
+  //       }
+  //     },
+  //     // layerManagement
+  //     {
+  //       path: "/system/layerManagement",
+  //       name: "SystemLayerManagement",
+  //       meta: {
+  //         title: "图层管理"
+  //       },
+  //       children: [
+  //         {
+  //           path: "/system/layerManagement/maintain",
+  //           component: () => import("@/views/system/layerManagement/maintain/index.vue"),
+  //           name: "SystemLayerManagementMaintain",
+  //           meta: {
+  //             title: "图层维护"
+  //           }
+  //         },
+  //         {
+  //           path: "/system/layerManagement/config",
+  //           component: () => import("@/views/system/layerManagement/config/index.vue"),
+  //           name: "SystemLayerManagementConfig",
+  //           meta: {
+  //             title: "图层配置"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     // popularScienceEducation
+  //     {
+  //       path: "/system/popularScienceEducation",
+  //       component: () => import("@/views/system/popularScienceEducation/index.vue"),
+  //       name: "SystemPopularScienceEducation",
+  //       meta: {
+  //         title: "科普宣教"
+  //       }
+  //     },
+  //     // imageManage
+  //     {
+  //       path: "/system/imageManage",
+  //       component: () => import("@/views/system/imageManage/index.vue"),
+  //       name: "SystemImageManage",
+  //       meta: {
+  //         title: "影像管理"
+  //       }
+  //     },
+  //     // localSurvey
+  //     {
+  //       path: "/system/localSurvey",
+  //       component: () => import("@/views/system/localSurvey/index.vue"),
+  //       name: "SystemLocalSurvey",
+  //       meta: {
+  //         title: "本底资源"
+  //       }
+  //     }
+  //   ]
+  // }

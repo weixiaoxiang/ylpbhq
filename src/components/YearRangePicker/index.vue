@@ -1,29 +1,3 @@
-<template>
-  <div class="year-range-picker">
-    <el-date-picker
-      v-model="startYear"
-      type="year"
-      placeholder="开始年份"
-      class="year-picker"
-      style="max-width: 104px !important"
-      @change="changeStartYear"
-      format="YYYY"
-      value-format="YYYY"
-    />
-    <span class="range-word"> 至 </span>
-    <el-date-picker
-      v-model="endYear"
-      type="year"
-      placeholder="结束年份"
-      class="year-picker"
-      style="max-width: 104px !important"
-      @change="changeEndYear"
-      format="YYYY"
-      value-format="YYYY"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 //导入多语言配置
 import { ElMessage } from "element-plus"
@@ -70,7 +44,31 @@ const changeEndYear = (val: any) => {
   emits("yearChanged", times)
 }
 </script>
-
+<template>
+  <div class="year-range-picker">
+    <el-date-picker
+      v-model="startYear"
+      type="year"
+      placeholder="开始年份"
+      class="year-picker"
+      style="max-width: 104px !important"
+      @change="changeStartYear"
+      format="YYYY"
+      value-format="YYYY"
+    />
+    <span class="range-word"> 至 </span>
+    <el-date-picker
+      v-model="endYear"
+      type="year"
+      placeholder="结束年份"
+      class="year-picker"
+      style="max-width: 104px !important"
+      @change="changeEndYear"
+      format="YYYY"
+      value-format="YYYY"
+    />
+  </div>
+</template>
 <style scoped lang="scss">
 .year-range-picker {
   color: black;

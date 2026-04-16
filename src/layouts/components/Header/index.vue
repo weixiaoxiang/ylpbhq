@@ -1,138 +1,177 @@
 <script lang="ts" setup>
+import { ElMessage } from "element-plus"
+import { request } from "@/utils/service"
+
 defineOptions({
   name: "LogoHeader"
 })
+const { logout, user } = useConfigStore()
+const { menus } = storeToRefs(useConfigStore())
 const router = useRouter()
 const title = import.meta.env.VITE_APP_TITLE
-const active = ref(4)
-interface Menu {
-  id: number
-  label: string
-  value: string
-}
-const menuList = ref<Menu[]>([
-  {
-    id: 1,
-    label: "科研管理",
-    value: "/research"
-  },
-  {
-    id: 2,
-    label: "森林资源管理",
-    value: "/forest"
-  },
-  {
-    id: 3,
-    label: "应急指挥",
-    value: "/emergency"
-  },
-  {
-    id: 4,
-    label: "智能巡护",
-    value: "/patrol"
-  },
-  {
-    id: 5,
-    label: "生态旅游",
-    value: "/tourism"
-  },
-  {
-    id: 6,
-    label: "防灾减灾",
-    value: "/disaster"
-  },
-  {
-    id: 7,
-    label: "AI+遥感",
-    value: "/ai"
-  },
-  {
-    id: 8,
-    label: "大数据分析",
-    value: "/bigdata"
-  }
-])
-const change = (item: Menu) => {
-  active.value = item.id
+const change = (item: any) => {
   // 路由跳转
-  router.push(item.value)
+  router.push(item.fullPath)
 }
-// 定义时间，包含时分秒
-const time = ref(formatTime(new Date()))
+// 定义时间，包含年月日时分秒
+const time = ref(formatDateTime(new Date()))
 const intervalId = setInterval(() => {
-  time.value = formatTime(new Date())
+  time.value = formatDateTime(new Date())
 }, 1000)
-onUnmounted(() => {
+// 系统管理
+const toSystem = () => {
+  router.push("/system")
+}
+// 下载使用说明
+const downInstructions = async () => {
+  try {
+    // TODO: 替换为实际的使用说明下载接口地址
+    const API_URL = "/api/system/downloadInstructions"
+
+    const response: any = await request({
+      url: API_URL,
+      method: "get",
+      responseType: "blob"
+    })
+
+    // 从响应头获取文件名，如果没有则使用默认文件名
+    const contentDisposition = response.headers?.["content-disposition"] || ""
+    let fileName = "使用说明.zip"
+    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+    if (fileNameMatch && fileNameMatch[1]) {
+      // 处理编码过的文件名
+      fileName = fileNameMatch[1].replace(/['"]/g, "")
+      // 解码中文文件名
+      try {
+        fileName = decodeURIComponent(fileName)
+      } catch {
+        // 解码失败使用原始文件名
+      }
+    }
+
+    // 创建下载链接
+    const blob = new Blob([response as any])
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+
+    // 清理
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error("下载使用说明失败:", error)
+    ElMessage.error("下载使用说明失败，请稍后重试")
+  }
+}
+onBeforeUnmount(() => {
   intervalId && clearInterval(intervalId)
 })
 </script>
 
 <template>
   <div class="app-header bgbox flex h-[70px]">
-    <div class="l-con flex h-full w-[660px] items-center gap-1 px-2">
+    <div class="l-con flex h-full items-center gap-1 px-2 pt-1">
       <img
+        class="bg"
         :src="$fun.getImg('header/header-bg1.png')"
         alt=""
       />
-      <div class="z-10 flex size-10 items-center justify-center bg-[#396195] font-DDIN text-[10px] text-custom3">
-        LOGO
-      </div>
-      <div class="gap z-10 flex flex-col justify-center font-youshe font-bold">
-        <span class="logo truncate text-2xl">{{ title }}</span>
-        <span class="logo text-xs"
+      <img
+        class="l-logo mr-2"
+        :src="$fun.getImg('header/head-logo.svg')"
+        alt=""
+      />
+      <div class="gap z-10 flex flex-col justify-center font-bold">
+        <span class="logo text1 truncate">{{ title }}</span>
+        <span class="logo text2"
           >Anhui Yaoluoping National Nature Reserve Geographic Information and Monitoring Management Platform</span
         >
       </div>
     </div>
-    <div class="r-con flex flex-1 items-center justify-between text-custom2">
+    <div class="r-con z-10 flex flex-1 items-center justify-between text-custom2">
       <img
         :src="$fun.getImg('header/header-bg2.png')"
         alt=""
       />
       <div class="bar z-10 flex justify-between gap-1">
-        <div
-          v-for="item in menuList"
-          :key="item.label"
-          class="bar-item bgbox flex h-[32px] w-[108px] cursor-pointer items-center justify-center"
-          :class="{ active: active === item.id }"
-          @click="change(item)"
+        <template
+          v-for="item in menus.classA"
+          :key="item.name"
         >
-          {{ item.label }}
-        </div>
+          <div
+            v-permission="item.id"
+            v-if="item.name !== '系统管理'"
+            class="bar-item bgbox cursor-pointer"
+            :class="{ active: menus?.activeA?.id === item.id }"
+          >
+            <div class="bar-item-text">{{ item.name }}</div>
+            <div
+              v-if="item.children?.length > 0"
+              class="bar-item-children"
+            >
+              <div
+                v-permission="child.id"
+                v-for="child in item.children"
+                :key="child.id"
+                class="div-underline"
+                :class="{ current: menus?.activeB?.id === child.id, 'size-small': child.title?.length > 5 }"
+                v-ripple="{ color: 'rgba(30, 161, 223,0.5)', duration: 600 }"
+                @click.stop="change(child)"
+              >
+                {{ child.name }}
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
-      <div class="z-10 mr-2 flex w-[230px] items-center justify-between">
-        <div class="time text-lg">{{ time }}</div>
+      <div class="r-section z-10 mr-2 flex items-center gap-2 justify-between">
+        <div class="time">{{ time }}</div>
 
         <div class="flex items-center gap-2">
-          <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-          <el-popconfirm
-            title="确认退出"
-            placement="bottom-end"
-          >
-            <template #reference>
-              <div>
-                超级管理员<el-icon> <i-ep-arrow-down-bold /></el-icon>
-              </div>
+          <el-dropdown trigger="click">
+            <div class="el-dropdown-link">
+              <el-avatar
+                class="avatar"
+                :size="32"
+                src="https://picsum.photos/id/1/60/60"
+              />
+              <span> {{ user.userName }} </span><el-icon style="margin-top: 2px"> <i-ep-arrow-down-bold /></el-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="toSystem">系统管理</el-dropdown-item>
+                <el-dropdown-item>修改密码</el-dropdown-item>
+                <el-dropdown-item @click="downInstructions">使用说明</el-dropdown-item>
+                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
             </template>
-          </el-popconfirm>
+          </el-dropdown>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .app-header {
   .l-con {
+    width: 34.375vw;
+    /* width: 660px; */
     position: relative;
-    img {
+    padding-top: 20px;
+    img.bg {
       position: absolute;
       left: 0;
       top: 0;
       right: 0;
       bottom: 0;
+      width: 100%;
+      height: 87px;
       pointer-events: none;
-      z-index: 1;
+      z-index: 10;
     }
     .logo {
       /* 文字颜色上下渐变 */
@@ -140,9 +179,20 @@ onUnmounted(() => {
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    .text1 {
+      font-size: 1.1458vw;
+    }
+    .text2 {
+      font-size: 0.7813vw;
+    }
+    .l-logo {
+      z-index: 11;
+    }
   }
   .r-con {
+    min-width: 52.0833vw;
     position: relative;
+    z-index: 999;
     img {
       position: absolute;
       left: 0;
@@ -153,18 +203,141 @@ onUnmounted(() => {
     }
     .bar {
       .bar-item {
-        background-image: url("@/assets/images/header/item-bg.png");
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 5.625vw;
+        height: 32px;
+        text-align: center;
+        line-height: 32px;
+        font-size: 0.8333vw;
         &.active {
-          color: #e6e3e3;
-          background-image: url("@/assets/images/header/item-active-bg.png");
+          .bar-item-text {
+            color: #e6e3e3;
+            background-image: url("@/assets/images/header/item-active-bg.png");
+          }
+        }
+        &:hover {
+          .bar-item-children {
+            height: initial;
+            opacity: 1;
+          }
+        }
+        .bar-item-text {
+          width: 100%;
+          height: 32px;
+          text-align: center;
+          line-height: 32px;
+          font-size: 0.8333vw;
+          background-image: url("@/assets/images/header/item-bg.png");
+          background-size: inherit;
+        }
+        .bar-item-children {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: 32px;
+          left: 0;
+          width: 4.8958vw;
+          height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 0.5s;
+          font-size: 0.7292vw;
+          background-color: #16426e;
+          color: #afb6c1;
+          border-bottom-left-radius: 2px;
+          border-bottom-right-radius: 2px;
+          box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.1);
+          > div {
+            width: 100%;
+          }
+          .current {
+            &::before {
+              content: "";
+              position: absolute;
+              left: 50%;
+              bottom: 0;
+              width: 100%;
+              height: 2px;
+              background-color: #3cefff;
+              transform-origin: center;
+              transform: translate(-50%, 0) scaleX(1);
+              transition: transform 0.3s ease-in-out;
+            }
+          }
+          .size-small {
+            font-size: 0.625vw;
+          }
         }
       }
     }
-    .time {
-      /* 文字颜色上下渐变 */
-      background: linear-gradient(180deg, #b5c5d0 0%, #c5e6ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .r-section {
+      // width: 11.9792vw;
+      width: fit-content;
+      font-size: 0.7292vw;
+      .time {
+        font-size: 0.7292vw;
+        /* 文字颜色上下渐变 */
+        background: linear-gradient(180deg, #b5c5d0 0%, #c5e6ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .el-dropdown {
+        margin-left: 10px;
+        :deep(.el-dropdown-link) {
+          .avatar {
+            width: 1.6667vw;
+            height: 1.6667vw;
+          }
+          display: flex;
+          gap: 5px;
+          align-items: center;
+          /* 文字颜色上下渐变 */
+          background: linear-gradient(180deg, #b5c5d0 0%, #c5e6ff 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+      }
+    }
+  }
+  .div-underline {
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #3cefff;
+      transform-origin: center;
+      transform: translate(-50%, 0) scaleX(0);
+      transition: transform 0.3s ease-in-out;
+    }
+    &:hover::before {
+      transform: translate(-50%, 0) scaleX(1);
+    }
+  }
+}
+</style>
+<style lang="scss">
+// .avatar {
+//   width: 2.0833vw;
+//   height: 2.0833vw;
+//   img {
+//   }
+// }
+.logout-popconfirm {
+  background: #204778 !important;
+  border: none !important;
+  color: #fff !important;
+  .el-popper__arrow {
+    &:before {
+      background: #204778 !important;
+      border: none !important;
     }
   }
 }

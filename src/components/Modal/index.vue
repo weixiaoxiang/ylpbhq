@@ -1,17 +1,36 @@
 <template>
-  <div v-if="props.show" class="custom-modal">
+  <div
+    v-if="props.show"
+    class="custom-modal"
+  >
     <div class="origin">
-      <div ref="innerRef" class="inner" @wheel="handleWheel">
-        <Close class="close panzoom-exclude" @click="close" />
+      <div
+        ref="innerRef"
+        class="inner"
+        @wheel="handleWheel"
+      >
+        <BlueClose
+          class="close panzoom-exclude"
+          @click="close"
+        />
         <slot name="container" />
       </div>
     </div>
-    <div v-if="showShade" class="shade" @click="close" />
+    <div
+      v-if="showShade"
+      class="shade"
+      :style="{
+        backgroundColor: shadeColor
+      }"
+      @click="close('modal')"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import Close from "@/assets/modal/close.svg?component"
+// import Close from "@/assets/modal/close.svg?component"
+import BlueClose from "@/assets/modal/blue-close.svg?component"
+
 import Panzoom from "@panzoom/panzoom"
 interface Props {
   show: boolean
@@ -20,6 +39,7 @@ interface Props {
   disablePanzoom?: boolean // 禁用modal的缩放和平移
   disablePan?: boolean // 禁用modal的平移
   disableZoom?: boolean // 禁用modal的缩放
+  shadeColor?: string // shade背景颜色
 }
 const props = withDefaults(defineProps<Props>(), {
   show: false,
@@ -27,18 +47,23 @@ const props = withDefaults(defineProps<Props>(), {
   closeOnClickModal: true,
   disablePanzoom: false,
   disablePan: false,
-  disableZoom: false
+  disableZoom: false,
+  shadeColor: "rgba(0,0,0,0.7)"
 })
 const emit = defineEmits<{
   "update:show": [boolean]
+  close: []
 }>()
 
 const innerRef = ref<any>()
 
 // 关闭
-const close = () => {
-  if (!props.closeOnClickModal) return
+const close = (type?: string) => {
+  if (type === "modal") {
+    if (!props.closeOnClickModal) return
+  }
   emit("update:show", false)
+  emit("close")
 }
 let panZoom: any = null
 const handleWheel = (event: any) => {
@@ -65,7 +90,7 @@ watchEffect(() => {
           excludeClass: "panzoom-exclude", // 设置排除项
           overflow: "initial",
           relative: false,
-          startScale: 1.2
+          startScale: 1
         })
         // 是否禁止pan
         if (props.disablePan) {
@@ -110,7 +135,7 @@ onBeforeUnmount(() => {
         top: -10px;
         right: 0;
         transform: translateX(calc(100% + 10px));
-        cursor: pointer;
+        cursor: pointer !important;
       }
     }
   }
@@ -120,7 +145,11 @@ onBeforeUnmount(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
   }
+}
+</style>
+<style>
+.custom-modal .panzoom-exclude {
+  cursor: initial !important;
 }
 </style>

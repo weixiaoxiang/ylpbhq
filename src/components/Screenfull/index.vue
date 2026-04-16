@@ -29,6 +29,7 @@ const fullscreenTips = computed(() => {
 const fullscreenSvgName = computed(() => {
   return isFullscreen.value ? "fullscreen-exit" : "fullscreen"
 })
+// 内容区全屏
 const handleFullscreenClick = () => {
   const dom = document.querySelector(props.element) || undefined
   screenfull.isEnabled ? screenfull.toggle(dom) : ElMessage.warning("您的浏览器无法工作")
@@ -54,6 +55,7 @@ const contentLargeTips = computed(() => {
 const contentLargeSvgName = computed(() => {
   return isContentLarge.value ? "fullscreen-exit" : "fullscreen"
 })
+// 内容区放大
 const handleContentLargeClick = () => {
   document.body.className = !isContentLarge.value ? "content-large" : ""
   isContentLarge.value = !isContentLarge.value

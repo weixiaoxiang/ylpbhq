@@ -12,4 +12,8 @@ src/autoImport
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
-pnpm-lock.yaml
+
+# SVN / 本地备份与构建产物
+.svn/
+ecotourism图片备份/
+鹞落坪Web_dist/

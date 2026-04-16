@@ -20,20 +20,21 @@ class Measure {
   private draw: any
   private style = new Style({
     fill: new Fill({
-      color: "rgba(255, 255, 255, 0.2)"
+      color: "rgba(0, 204, 221, 0.2)"
     }),
     stroke: new Stroke({
-      color: "rgba(0, 0, 0, 0.5)",
+      color: "rgba(0, 204, 221, 1)",
       lineDash: [10, 10],
-      width: 2
+      width: 3
     }),
     image: new CircleStyle({
       radius: 5,
       stroke: new Stroke({
-        color: "rgba(0, 0, 0, 0.7)"
+        color: "rgba(0, 204, 221,1)",
+        width: 2
       }),
       fill: new Fill({
-        color: "rgba(255, 255, 255, 0.2)"
+        color: "rgba(255, 240, 209, 1)"
       })
     })
   })
@@ -49,19 +50,22 @@ class Measure {
     this.map = opt.map
     this.typeSelect = opt.type || "LineString"
     this.init()
+    this.addTooltipStyle()
   }
   init() {
     this.layer = new VectorLayer({
       source: this.source,
       style: {
-        "fill-color": "rgba(255, 255, 255, 0.2)",
-        "stroke-color": "#ffcc33",
-        "stroke-width": 2,
+        "fill-color": "rgba(0, 204, 221, 0.2)",
+        "stroke-color": "rgba(0, 204, 221, 1)",
+        "stroke-width": 3,
+        "stroke-line-dash": [10, 10],
         "circle-radius": 7,
-        "circle-fill-color": "#ffcc33"
+        "circle-fill-color": "rgba(0, 204, 221, 1)"
       },
       zIndex: 10
     })
+    this.layer.set("title", "measureLayer")
     this.map.addLayer(this.layer)
 
     const pointerMoveHandler = (evt) => {
@@ -180,17 +184,26 @@ class Measure {
     this.measureTooltip.set("name", "measureTooltip")
     this.map.addOverlay(this.measureTooltip)
   }
-  changeType(type: string) {
-    this.typeSelect = type
-    this.draw && this.map.removeInteraction(this.draw)
+  // 开启绘制
+  startDraw() {
     this.addInteraction()
   }
-  // 清除绘制
+  // 切换绘制类型
+  changeType(type: string) {
+    this.typeSelect = type
+    // debugger
+    if (this.draw) {
+      this.map.removeInteraction(this.draw)
+    }
+    this.addInteraction()
+  }
+  // 结束绘制 清除绘制
   removeInteraction() {
     this.map.removeInteraction(this.draw)
     this.layer.getSource().clear()
     this.map.removeLayer(this.layer)
     this.map.removeOverlay(this.helpTooltip)
+    this.removeTooltipStyle()
     const overlays = this.map.getOverlays().getArray()
     for (let i = 0; i < overlays.length; i++) {
       if (overlays[i].get("name") === "measureTooltip") {
@@ -198,6 +211,54 @@ class Measure {
         i--
       }
     }
+  }
+
+  // 全局添加tooltip样式
+  addTooltipStyle() {
+    const style = document.createElement("style")
+    style.setAttribute("id", "ol-tooltip")
+    style.innerHTML = `
+      .ol-tooltip {
+          position: relative;
+          background: rgba(0, 204, 221, 1);
+          border-radius: 4px;
+          color: white;
+          padding: 4px 8px;
+          white-space: nowrap;
+          font-size: 12px;
+          font-weight: bold;
+          cursor: default;
+          user-select: none;
+      }
+      .ol-tooltip-measure {
+        opacity: 1;
+      }
+      .ol-tooltip-static {
+        background-color: rgba(0, 204, 221, 1);
+        color: white;
+        border: 1px solid rgba(0, 204, 221, 1);
+      }
+      .ol-tooltip-measure:before,
+      .ol-tooltip-static:before {
+        border-top: 6px solid rgba(0, 204, 221, 1);
+        border-right: 6px solid transparent;
+        border-left: 6px solid transparent;
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        margin-left: -7px;
+        left: 50%;
+      }
+      .ol-tooltip-static:before {
+        border-top-color: rgba(0, 204, 221, 1);
+      }
+    `
+    document.head.appendChild(style)
+  }
+  // 清除tooltip样式
+  removeTooltipStyle() {
+    const style = document.querySelector("#ol-tooltip")
+    style && style.remove()
   }
 }
 export default Measure

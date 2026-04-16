@@ -1,5 +1,4 @@
 export const autofitfix = ({ baseEl, fitEls, resize = true }: any) => {
-  // console.log("autofitfix", baseEl, fitEls, resize)
   const fixStyle = () => {
     const el = document.querySelector(baseEl)
     if (!el) return

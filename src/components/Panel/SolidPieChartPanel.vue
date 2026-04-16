@@ -3,11 +3,10 @@
     ref="chartPanelRef"
     class="chart-panel"
     id="chart-panel"
-  >
-    <EchartsEmpty v-if="!chart" />
-  </div>
+  ></div>
+  <EmptyData v-show="!data" />
 </template>
-
+<!-- 实心饼图 -->
 <script lang="ts" setup>
 // @ts-nocheck
 /* eslint-disable */
@@ -16,8 +15,13 @@ const proxy = getCurrentInstance()!.proxy as any
 interface Props {
   data?: any
   title?: any
+  colors?: any
+  gradient?: any
+  dw?: any
 }
-const props = withDefaults(defineProps<Props>(), {})
+const props = withDefaults(defineProps<Props>(), {
+  gradient: false // 是否显示渐变
+})
 const chartPanelRef = ref("")
 let chart: any = null
 const initChart = async () => {
@@ -36,8 +40,8 @@ const resize = () => {
 }
 const setOption = () => {
   const response = props.data
-  const unit = response.dw || "个"
-  const color = ["#71F28D", "#EDB53F", "#EB2927", "#9747FF", "#B90000"]
+  const unit = props.dw || "个"
+  const color = props.colors ? props.colors : ["#71F28D", "#EDB53F", "#EB2927", "#9747FF", "#B90000"]
   const data = response.map((d, i) => {
     return {
       name: d.name,
@@ -67,7 +71,8 @@ const setOption = () => {
         type: "shadow"
       },
       textStyle: {
-        color: "#fff"
+        color: "#fff",
+        fontSize: 12
       },
       formatter: `{b}（${unit}）：{c}`
     },
@@ -77,8 +82,12 @@ const setOption = () => {
       top: "center",
       right: "right",
       data: legend,
+      formatter: (name) => {
+        return name + "：" + response.find((d) => d.name === name).value + unit
+      },
       textStyle: {
-        color: "#fff"
+        color: "#fff",
+        fontSize: 12
       }
     },
     color: color,
@@ -88,16 +97,17 @@ const setOption = () => {
         center: ["40%", "50%"],
         radius: "70%",
         labelLine: {
-          show: true,
+          show: false,
           lineStyle: {
-            width: 2
+            width: 2,
+            length: 20
           }
         },
         labelLayout: {
           draggable: true
         },
         label: {
-          show: true,
+          show: false,
           formatter: "{d|{d}}\n{b|{b}(%)}",
           rich: {
             b: {
@@ -112,7 +122,6 @@ const setOption = () => {
           // padding: [8, 15],
           align: "center",
           lineHeight: 20
-          // backgroundColor: "#F8FBFF"
         },
         data: data,
         emphasis: {
@@ -126,27 +135,98 @@ const setOption = () => {
     ]
   }
   chart.setOption(options)
+  timer && clearInterval(timer)
+  startTooltipAnimation()
 }
-watch(
-  () => props.data,
-  () => {
-    if (!chart) {
-      initChart()
+let timer: any = null,
+  currentIndex: any = 0
+// 开始tooltip动画，高亮和选中当前项
+const startTooltipAnimation = () => {
+  if (!chart) return
+
+  const dataLen = chart.getOption().series[0].data.length
+  if (dataLen === 0) return
+
+  let lastIndex = -1 // 记录上一次选中的索引
+
+  const showTipAndSelect = (index: number) => {
+    // 清除上一次的选中和高亮状态
+    if (lastIndex !== -1) {
+      chart.dispatchAction({
+        type: "downplay",
+        seriesIndex: 0,
+        dataIndex: lastIndex
+      })
+      chart.dispatchAction({
+        type: "unselect",
+        seriesIndex: 0,
+        dataIndex: lastIndex
+      })
     }
-    setOption()
+
+    // 高亮和选中当前项
+    chart.dispatchAction({
+      type: "highlight",
+      seriesIndex: 0,
+      dataIndex: index
+    })
+
+    chart.dispatchAction({
+      type: "showTip",
+      seriesIndex: 0,
+      dataIndex: index
+    })
+
+    chart.dispatchAction({
+      type: "select",
+      seriesIndex: 0,
+      dataIndex: index
+    })
+
+    lastIndex = index // 更新上一次选中的索引
   }
-)
-onMounted(() => {
-  initChart()
-  setOption()
-})
-onBeforeUnmount(() => {
+
+  // 初始显示
+  showTipAndSelect(currentIndex)
+  currentIndex = (currentIndex + 1) % dataLen
+
+  // 定时切换显示
+  timer = setInterval(() => {
+    showTipAndSelect(currentIndex)
+    currentIndex = (currentIndex + 1) % dataLen
+  }, 3000)
+}
+// 销毁chart
+const disposeChart = () => {
   if (chart) {
     window.removeEventListener("resize", resize)
     chart.dispose()
     chart = null
     chartPanelRef.value = ""
   }
+  timer && clearInterval(timer)
+}
+watch(
+  () => props.data,
+  (val) => {
+    if (val) {
+      if (!chart) {
+        initChart()
+      }
+      setOption()
+    } else {
+      disposeChart()
+    }
+  }
+)
+onMounted(() => {
+  if (props.data) {
+    initChart()
+    setOption()
+  }
+})
+onBeforeUnmount(() => {
+  disposeChart()
 })
 </script>
 

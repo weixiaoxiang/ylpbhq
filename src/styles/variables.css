@@ -1,76 +1,40 @@
 /** 全局 CSS 变量，这种变量不仅可以在 CSS 和 SCSS 中使用，还可以导入到 JS 中使用 */
 
-:root {
-  /** Body */
-  --v3-body-text-color: var(--el-text-color-primary);
-  --v3-body-bg-color: var(--el-bg-color-page);
-  /** Header 区域 = NavigationBar 组件 + TagsView 组件 */
-  --v3-header-height: calc(var(--v3-navigationbar-height) + var(--v3-tagsview-height));
-  --v3-header-bg-color: var(--el-bg-color);
-  --v3-header-box-shadow: var(--el-box-shadow-lighter);
-  --v3-header-border-bottom: 1px solid var(--el-fill-color);
-  /** NavigationBar 组件 */
-  --v3-navigationbar-height: 50px;
-  --v3-navigationbar-text-color: var(--el-text-color-regular);
-  /** Sidebar 组件（左侧模式全部生效、顶部模式全部不生效、混合模式非颜色部分生效） */
-  --v3-sidebar-width: 220px;
-  --v3-sidebar-hide-width: 58px;
-  --v3-sidebar-border-right: 1px solid var(--el-fill-color);
-  --v3-sidebar-menu-item-height: 60px;
-  --v3-sidebar-menu-tip-line-bg-color: var(--el-color-primary);
-  --v3-sidebar-menu-bg-color: #001428;
-  --v3-sidebar-menu-hover-bg-color: #409eff10;
-  --v3-sidebar-menu-text-color: #cfd3dc;
-  --v3-sidebar-menu-active-text-color: #ffffff;
-  /** TagsView 组件 */
-  --v3-tagsview-height: 34px;
-  --v3-tagsview-text-color: var(--el-text-color-regular);
-  --v3-tagsview-tag-active-text-color: #ffffff;
-  --v3-tagsview-tag-bg-color: var(--el-bg-color);
-  --v3-tagsview-tag-active-bg-color: var(--el-color-primary);
-  --v3-tagsview-tag-border-radius: 2px;
-  --v3-tagsview-tag-border-color: var(--el-border-color-lighter);
-  --v3-tagsview-tag-active-border-color: var(--el-color-primary);
-  --v3-tagsview-tag-icon-hover-bg-color: #00000030;
-  --v3-tagsview-tag-icon-hover-color: #ffffff;
-  --v3-tagsview-contextmenu-text-color: var(--el-text-color-regular);
-  --v3-tagsview-contextmenu-hover-text-color: var(--el-text-color-primary);
-  --v3-tagsview-contextmenu-bg-color: var(--el-bg-color-overlay);
-  --v3-tagsview-contextmenu-hover-bg-color: var(--el-fill-color);
-  --v3-tagsview-contextmenu-box-shadow: var(--el-box-shadow);
-  /** Hamburger 组件 */
-  --v3-hamburger-text-color: var(--el-text-color-primary);
-  /** RightPanel 组件  */
-  --v3-rightpanel-button-bg-color: #001428;
-
-  --top-margin: 10px;
-}
-
-/** 内容区放大时，将不需要的组件隐藏 */
-body.content-large {
-  /** Header 区域 = TagsView 组件 */
-  --v3-header-height: var(--v3-tagsview-height);
-  /** NavigationBar 组件 */
-  --v3-navigationbar-height: 0px;
-  /** Sidebar 组件 */
-  --v3-sidebar-width: 0px;
-  --v3-sidebar-hide-width: 0px;
-}
-
-/** 内容区全屏时，将不需要的组件隐藏 */
-body.content-full {
-  /** Header 区域 */
-  --v3-header-height: 0px;
-  /** NavigationBar 组件 */
-  --v3-navigationbar-height: 0px;
-  /** Sidebar 组件 */
-  --v3-sidebar-width: 0px;
-  --v3-sidebar-hide-width: 0px;
-  /** TagsView 组件 */
-  --v3-tagsview-height: 0px;
-}
-
 /* 自定义的变量 */
 :root {
-  --header-container-height: 72px;
+  /* el-plus 主要颜色 */
+  --el-color-primary: #00b894;
+  /* el-plus菜单选中时，背景颜色 */
+  --el-menu-active-color: rgba(0, 184, 148, 0.1) !important;
+
+  /** Body */
+  --body-text-color: var(--el-text-color-primary);
+  --body-bg-color: var(--el-bg-color-page);
+
+  /* 地图工具栏距右侧距离 */
+  --maptool-sidebar-right: calc(21.875vw + 40px);
+  /* 地图工具栏距底部距离 */
+  --maptool-sidebar-bottom: calc(305px + 40px);
+  /* 系统管理默认字体 */
+  --system-font-family: "黑体";
+  /* 系统管理背景颜色 */
+  --system-bg-color: #f3f3f3;
+  /* 系统管理文字颜色 */
+  --system-text-color: #eeeeee;
+  /* 系统管理菜单栏背景颜色 */
+  --system-menu-bg-color: #fff;
+  /* 系统管理顶部高度 */
+  --system-header-height: 64px;
+
+  /** TagsView 组件 */
+  --system-tagsview-tag-active-text-color: #ffffff;
+  --system-tagsview-tag-bg-color: var(--el-bg-color);
+  --system-tagsview-tag-active-bg-color: var(--el-color-primary);
+  --system-tagsview-tag-active-border-color: var(--el-color-primary);
+  --system-tagsview-tag-icon-hover-bg-color: #000000;
+  --system-tagsview-tag-icon-hover-color: #ffffff;
+}
+/** 内容区放大时，将不需要的组件隐藏 */
+body.content-large {
+  --system-header-height: 0px;
 }
