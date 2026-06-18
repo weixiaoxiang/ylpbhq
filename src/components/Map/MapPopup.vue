@@ -189,14 +189,14 @@ const svg = `
           L 15 15
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `
-// 存储防火监控点信息，有包家防火和包家防火热成像
-let currentFireMonitoringInfo = ref<any>(null)
-// 切换包家防火和包家防火热成像（防火监测点模块）
-const handleFireMonitoringInfoClick = async (item: any) => {
-  currentFireMonitoringInfo.value = item
-  // 动态弹窗
-  const showfiledch = currentFireMonitoringInfo.value.showfiledch?.split(",")
-  const showfiled = currentFireMonitoringInfo.value.showfiled?.split(",")
+// 同物理点位多设备时，当前选中的设备详情（用于 Tab 切换与视频预览）
+const currentCoLocationDeviceInfo = ref<any>(null)
+// 切换同点位下的不同监控设备
+const handleCoLocationDeviceClick = async (item: any) => {
+  currentCoLocationDeviceInfo.value = item
+  // 动态弹窗字段配置
+  const showfiledch = currentCoLocationDeviceInfo.value.showfiledch?.split(",")
+  const showfiled = currentCoLocationDeviceInfo.value.showfiled?.split(",")
   popupFileds.value =
     showfiledch?.map((item: string, index: number) => {
       return {
@@ -204,15 +204,15 @@ const handleFireMonitoringInfoClick = async (item: any) => {
         filedch: item
       }
     }) || []
-  // 当为监控卡口时，获取视频流地址
+  // 监控卡口类弹窗：切换设备后重新拉取视频流
   if (dynamicPopupInstances("监控卡口")) {
     firstFrameDisplay.value = true
     const { response, success } = await GetPreviewURLByType({
-      deviceId: currentFireMonitoringInfo.value.detail.deviceid,
+      deviceId: currentCoLocationDeviceInfo.value.detail.deviceid,
       Playtype: "ws"
     })
     if (success) {
-      currentFireMonitoringInfo.value.detail.videoUrl = response
+      currentCoLocationDeviceInfo.value.detail.videoUrl = response
     } else {
       ElMessage.info("未能获取到视频流信息，请重新加载！")
     }
@@ -224,13 +224,13 @@ watch(
   () => props.info,
   async (val) => {
     // console.log(val, props.formatName, 111)
-    currentFireMonitoringInfo.value = null
-    // 判断是否为防火监控点类型，有包家防火和包家防火热成像，做特殊处理
+    currentCoLocationDeviceInfo.value = null
+    // 同物理点位多设备：info 为数组时展示 Tab 切换 UI（数组首位为被点击设备）
     if (props.info instanceof Array) {
-      currentFireMonitoringInfo.value = props.info[0]
-      // 动态弹窗
-      const showfiledch = currentFireMonitoringInfo.value.showfiledch?.split(",")
-      const showfiled = currentFireMonitoringInfo.value.showfiled?.split(",")
+      currentCoLocationDeviceInfo.value = props.info[0]
+      // 动态弹窗字段配置
+      const showfiledch = currentCoLocationDeviceInfo.value.showfiledch?.split(",")
+      const showfiled = currentCoLocationDeviceInfo.value.showfiled?.split(",")
       popupFileds.value =
         showfiledch?.map((item: string, index: number) => {
           return {
@@ -238,15 +238,15 @@ watch(
             filedch: item
           }
         }) || []
-      // 当为监控卡口时，获取视频流地址
+      // 监控卡口类弹窗：默认加载被点击设备的视频流（info[0] 已在 getDetail 中排至首位）
       if (dynamicPopupInstances("监控卡口")) {
         firstFrameDisplay.value = true
         const { response, success } = await GetPreviewURLByType({
-          deviceId: currentFireMonitoringInfo.value.detail.deviceid,
+          deviceId: currentCoLocationDeviceInfo.value.detail.deviceid,
           Playtype: "ws"
         })
         if (success) {
-          currentFireMonitoringInfo.value.detail.videoUrl = response
+          currentCoLocationDeviceInfo.value.detail.videoUrl = response
         } else {
           ElMessage.info("未能获取到视频流信息，请重新加载！")
         }
@@ -413,15 +413,15 @@ watch(
       v-else-if="dynamicPopupInstances('监控卡口')"
       class="container"
     >
-      <template v-if="currentFireMonitoringInfo">
+      <template v-if="currentCoLocationDeviceInfo">
         <div class="title multiple-title">
-          <span>防火监控详细信息</span>
+          <span>监控点位详细信息</span>
           <div class="multiple-title-content">
             <span
-              :class="{ active: item.detail.deviceid === currentFireMonitoringInfo.detail.deviceid }"
+              :class="{ active: item.detail.deviceid === currentCoLocationDeviceInfo.detail.deviceid }"
               v-for="item in info"
               :key="item.detail.deviceid"
-              @click="handleFireMonitoringInfoClick(item)"
+              @click="handleCoLocationDeviceClick(item)"
               >{{ item.detail.mc }}</span
             >
           </div>
@@ -431,9 +431,9 @@ watch(
             <li
               v-for="item in popupFileds"
               :key="item.filed"
-              :title="currentFireMonitoringInfo?.detail[item.filed] || '暂无'"
+              :title="currentCoLocationDeviceInfo?.detail[item.filed] || '暂无'"
             >
-              {{ item.filedch }}：{{ currentFireMonitoringInfo?.detail[item.filed] || "暂无" }}
+              {{ item.filedch }}：{{ currentCoLocationDeviceInfo?.detail[item.filed] || "暂无" }}
             </li>
           </ul>
           <div class="r-con">
@@ -444,11 +444,11 @@ watch(
               element-loading-svg-view-box="-10, -10, 50, 50"
               element-loading-background="rgba(9, 20, 31, 0.6)"
               class="hk-video"
-              v-if="currentFireMonitoringInfo?.detail?.statu === '在线' && currentFireMonitoringInfo?.detail?.videoUrl"
+              v-if="currentCoLocationDeviceInfo?.detail?.statu === '在线' && currentCoLocationDeviceInfo?.detail?.videoUrl"
             >
               <hkVideo
                 style="width: 100%; height: 100%"
-                :video-url="currentFireMonitoringInfo.detail.videoUrl"
+                :video-url="currentCoLocationDeviceInfo.detail.videoUrl"
                 :currentLayout="1"
                 @firstFrameDisplay="firstFrameDisplay = false"
               />
@@ -919,24 +919,48 @@ watch(
       padding: 5px 10px;
       text-align: left;
     }
+    // 同物理点位多设备 Tab 切换栏
     .multiple-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
       .multiple-title-content {
         margin-right: 20px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 5px;
-        color: #999;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+        max-width: 72%;
         > span {
           cursor: pointer;
-          &:hover {
-            color: #eee;
+          padding: 4px 12px;
+          border-radius: 2px;
+          font-size: 13px;
+          line-height: 1.4;
+          color: #667689;
+          border: 1px solid rgba(102, 118, 137, 0.5);
+          background: rgba(12, 40, 77, 0.6);
+          white-space: nowrap;
+          transition:
+            color 0.2s ease-in-out,
+            border-color 0.2s ease-in-out,
+            background 0.2s ease-in-out;
+          // 未选中项悬停
+          &:hover:not(.active) {
+            color: #4fbef1;
+            border-color: rgba(79, 190, 241, 0.6);
+            background: rgba(79, 190, 241, 0.1);
           }
+          // 当前选中项：金色高亮 + 描边，与顶部分类 Tab 风格一致
           &.active {
-            color: #eee;
+            color: #edaa27;
+            font-weight: 700;
+            font-size: 14px;
+            border-color: #edaa27;
+            background: rgba(237, 170, 39, 0.18);
+            box-shadow: 0 0 8px rgba(237, 170, 39, 0.35);
           }
         }
       }

@@ -18,6 +18,12 @@ import OlExtBounce from "ol-ext/featureanimation/Bounce"
 
 import { easeOut } from "ol/easing"
 import { MultiPoint } from "ol/geom"
+import {
+  CO_LOCATION_GROUP_KEY,
+  getCoLocatedVideoMonitorFeatures,
+  isVideoMonitorTreeId,
+  rebuildVideoMonitorCoLocationGroups
+} from "@/utils/mapCoLocation"
 // module所属模块
 export default function useOlMap(
   // 弹窗组件
@@ -392,8 +398,11 @@ export default function useOlMap(
             CONFIG.callBack?.click?.(feature.getProperties())
             return
           }
-          // 获得详情统一方法
+          // 获得详情统一方法（同物理点位多设备时返回数组）
           const data = await getDetail(feature.getProperties())
+          if (!data) {
+            return
+          }
           let coordinates: Array<number>
           const geometryType = feature.getGeometry().getType()
           if (geometryType === "Point") {
@@ -513,34 +522,86 @@ export default function useOlMap(
     clusterNotAllowLayer.setVisible(CONFIG.showClusterLayer)
     clusterLayer.setVisible(CONFIG.showClusterLayer)
   }
-  // 点击要素获得详情
-  const getDetail = async (data: any) => {
+  /**
+   * 请求单个地图要素的弹窗详情
+   */
+  const fetchDetailById = async (data: { treeid: number; id: number }) => {
     const { response, success, msg } = await GetInterface({
       ssmk: "地图弹框详情",
       layerid: data.treeid,
       id: data.id
     })
-    if (!success) return ElMessage.error(msg)
+    if (!success) {
+      ElMessage.error(msg)
+      return null
+    }
     response.detail = response.response
     delete response.response
-    // 如果点击是防火监测点，则将包家防火热成像、包家防火同时查出来
-    if (data.treeid === 25) {
-      // 查询包家防火
-      const {
-        response: response2,
-        success: success2,
-        msg: msg2
-      } = await GetInterface({
-        ssmk: "地图弹框详情",
-        layerid: data.treeid,
-        id: 22
-      })
-      if (!success2) return ElMessage.error(msg2)
-      response2.detail = response2.response
-      delete response2.response
-      return [response, response2]
-    }
     return response
+  }
+
+  /**
+   * 点击要素获得详情
+   * 视频监测点位（treeid 24/25/26/28）若存在同物理位置分组，则批量查询并返回数组供弹窗 Tab 切换
+   */
+  const getDetail = async (data: any) => {
+    const groupId = data[CO_LOCATION_GROUP_KEY]
+
+    // 同点位多设备：组内设备数大于 1 时批量拉取详情
+    if (isVideoMonitorTreeId(data.treeid) && groupId) {
+      const clickedFeature = vectorSource.getFeatures().find((feature: any) => {
+        return (
+          Number(feature.get("treeid")) === Number(data.treeid) &&
+          Number(feature.get("id")) === Number(data.id) &&
+          feature.get(CO_LOCATION_GROUP_KEY) === groupId
+        )
+      })
+
+      if (clickedFeature) {
+        const groupFeatures = getCoLocatedVideoMonitorFeatures(vectorSource.getFeatures(), clickedFeature)
+        if (groupFeatures.length > 1) {
+          const clickedTreeId = Number(data.treeid)
+          const clickedId = Number(data.id)
+          // 批量拉取同组设备详情，并保留与要素的对应关系
+          const detailPairs = await Promise.all(
+            groupFeatures.map(async (feature: any) => ({
+              feature,
+              detail: await fetchDetailById({
+                treeid: feature.get("treeid"),
+                id: feature.get("id")
+              })
+            }))
+          )
+          const successPairs = detailPairs.filter((pair) => pair.detail)
+          if (successPairs.length > 1) {
+            // 将被点击设备排到首位，弹窗默认展示与播放该设备（而非组内第一个）
+            successPairs.sort((a, b) => {
+              const aIsClicked =
+                Number(a.feature.get("treeid")) === clickedTreeId && Number(a.feature.get("id")) === clickedId
+              const bIsClicked =
+                Number(b.feature.get("treeid")) === clickedTreeId && Number(b.feature.get("id")) === clickedId
+              if (aIsClicked && !bIsClicked) return -1
+              if (!aIsClicked && bIsClicked) return 1
+              return 0
+            })
+            return successPairs.map((pair) => pair.detail)
+          }
+          if (successPairs.length === 1) {
+            return successPairs[0].detail
+          }
+          return null
+        }
+      }
+    }
+
+    return fetchDetailById(data)
+  }
+
+  /**
+   * 图层数据变更后，重新计算视频监测点的同物理位置分组
+   */
+  const refreshVideoMonitorCoLocationGroups = () => {
+    rebuildVideoMonitorCoLocationGroups(vectorSource.getFeatures())
   }
   // 关闭弹窗
   const closePopup = () => {
@@ -706,6 +767,8 @@ export default function useOlMap(
       }
     })
     vectorLayer.setVisible(!CONFIG.showClusterLayer)
+    // 视频监测图层加载后，按 10 米阈值重建同点位分组
+    refreshVideoMonitorCoLocationGroups()
     // 将矢量图层要素存储，对外暴露
     vectorFeatures.value = vectorSource.getFeatures()
   }
@@ -720,6 +783,8 @@ export default function useOlMap(
     if (CONFIG.showClusterLayer) {
       clusterNotAllowLayer.getSource().removeFeatures(features)
     }
+    // 图层移除后同步刷新同点位分组，避免残留 coLocationGroupId
+    refreshVideoMonitorCoLocationGroups()
     // 将矢量图层要素存储，对外暴露
     vectorFeatures.value = vectorSource.getFeatures()
   }
