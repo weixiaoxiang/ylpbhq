@@ -330,7 +330,7 @@
               <template v-else-if="activeTab == 4">
                 <el-table-column
                   prop="value"
-                  label="地表裂缝（cm）"
+                  label="地表裂缝（mm）"
                   align="center"
                 >
                 </el-table-column>
@@ -496,7 +496,7 @@ function export2Excel(exportData: any) {
         model: "name"
       },
       {
-        label: "地表裂缝（cm）",
+        label: "地表裂缝（mm）",
         model: "value"
       },
       {
@@ -571,7 +571,7 @@ const jcData = ref<any>([
     name: "地表裂缝",
     img: "/images/geologicalDisaster/dialogimage/ssjcicon6.png",
     value: "0",
-    unit: "cm"
+    unit: "mm"
   }
 ])
 const activeTab = ref(1)
@@ -865,7 +865,7 @@ const initChart1 = (response: any) => {
 let chartjc: any = null
 const initChart = (response: any) => {
   let color = ["#02EC8A", "#02B4EC", "#EC9F02", "#cddc39"]
-  let unit = ["mm", "mm", "%", "cm"]
+  let unit = ["mm", "mm", "%", "mm"]
   let name = tabs.value[activeTab.value - 1].name
   let data: any = []
   let xAxisData: any = []

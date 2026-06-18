@@ -19,6 +19,7 @@ const {
   zoom: 12.5381,
   center: [116.12950826192058, 31.035296306176544],
   modular: modular.value,
+  vectorLayerDeclutter: false,
   openOverlay: false,
   overlayOffset: [0, -70],
   overlayPositioning: "bottom-center"

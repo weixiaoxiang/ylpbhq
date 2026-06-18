@@ -75,7 +75,7 @@ const jcData = ref<any>([
     name: "地表裂缝",
     img: "/images/geologicalDisaster/dialogimage/icon2-1.png",
     value: "0",
-    unit: "cm"
+    unit: "mm"
   },
   {
     name: "北向量变化",

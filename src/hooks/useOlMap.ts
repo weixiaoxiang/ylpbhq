@@ -339,12 +339,12 @@ export default function useOlMap(
     }
     // 点击事件
     map.value.on("click", async (e: any) => {
-      // console.log(
-      //   JSON.stringify({
-      //     lon: e.coordinate[0],
-      //     lat: e.coordinate[1]
-      //   })
-      // )
+      console.log(
+        JSON.stringify({
+          lon: e.coordinate[0],
+          lat: e.coordinate[1]
+        })
+      )
 
       // console.log(map.value.getView().getCenter(), map.value.getView().getZoom())
       // 获得点击的feature

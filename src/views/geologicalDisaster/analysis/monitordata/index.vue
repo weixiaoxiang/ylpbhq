@@ -315,7 +315,7 @@
             <template v-else-if="activeTab == 4">
               <el-table-column
                 prop="value"
-                label="地表裂缝（cm）"
+                label="地表裂缝（mm）"
                 align="center"
               >
               </el-table-column>
@@ -384,7 +384,7 @@ const jcData = ref<any>([
     name: "地表裂缝",
     img: getAssetsImages("ScientificResearch/geologicalDisaster-jc6.png"),
     value: "0",
-    unit: "cm"
+    unit: "mm"
   }
 ])
 //tab
@@ -645,7 +645,7 @@ function export2Excel(exportData) {
         model: "name"
       },
       {
-        label: "地表裂缝（cm）",
+        label: "地表裂缝（mm）",
         model: "value"
       },
       {

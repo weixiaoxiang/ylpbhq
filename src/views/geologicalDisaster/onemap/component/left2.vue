@@ -14,6 +14,7 @@
     <div class="wrap-con">
       <!-- <player :videoUrl="url" /> -->
       <livePlayerVideo
+        :key="playerKey"
         ref="recordVideoPlayer"
         :currentLayout="1"
         :videoUrl="url"
@@ -26,48 +27,54 @@
 <script setup lang="ts">
 import { GeologicHazard_VideoPlay } from "@/api"
 import livePlayerVideo from "@/components/livePlayer/index.vue"
-import player from "@/components/hkVideo/index.vue"
+
 interface Props {
-  equipmentId: string | number
+  /** 设备序列号（与下拉数据中的 deviceserial 一致），用于拉取播放地址 */
+  deviceSerial: string
 }
 const props = withDefaults(defineProps<Props>(), {
-  equipmentId: ""
+  deviceSerial: ""
 })
-watch(
-  () => props.equipmentId,
-  (newVal, oldVal) => {
-    if (newVal && newVal !== oldVal) {
-      // getVideoUrl(newVal)
-    }
-  }
-)
+
 const url = ref("")
-//获取视频地址
-const getVideoUrl = (deviceId?: any) => {
-  let query = {
-    protocol: 4,
-    deviceSerial: "FQ0153502" // deviceId
+/** 切换设备时强制重建播放器，避免内部状态不刷新 */
+const playerKey = computed(() => props.deviceSerial || "empty")
+
+const getVideoUrl = (serial?: string) => {
+  const raw = serial ?? props.deviceSerial
+  const deviceSerial = raw != null && String(raw).trim() !== "" ? String(raw).trim() : ""
+  if (!deviceSerial) {
+    url.value = ""
+    return Promise.resolve()
   }
   url.value = ""
+  const query = {
+    protocol: 4,
+    deviceSerial
+  }
   return GeologicHazard_VideoPlay(query)
     .then((res: any) => {
       if (res.response) {
-        let { data, msg } = res.response
+        const { data, msg } = res.response
         if (!data) {
-          return ElMessage.info(msg)
+          ElMessage.info(msg || "暂无视频")
         } else {
-          url.value = data.url
+          url.value = data.url ?? ""
         }
       } else {
         ElMessage.error(res.msg)
-        return ""
       }
     })
-    .catch((err: any) => {})
+    .catch(() => {})
 }
-onMounted(() => {
-  getVideoUrl()
-})
+
+watch(
+  () => props.deviceSerial,
+  (newVal) => {
+    getVideoUrl(newVal)
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss" scoped>

@@ -16,6 +16,8 @@ import { useMap } from "./component/map"
 import { nanoid } from "nanoid"
 const { initMap, loadPopup, closePopup, popupInfo, viewTo, addLayerManageData, removeLayerManageData } = useMap()
 const equipmentId = ref<any>("")
+/** 当前选中监测点对应的设备序列号，用于视频监控接口 */
+const deviceSerial = ref<string>("")
 const createTime = ref<any>(dayjs().format("YYYY-MM-DD HH:mm:ss"))
 const popupRef = ref()
 const queryParams = ref<any>({
@@ -44,8 +46,10 @@ const getData = () => {
   geologicalDisasterApi.GeologicHazard_DevicSelect({}).then((res: any) => {
     if (res.success) {
       treeData.value = res.response
-      queryParams.value.Id = treeData.value[0]?.monitorpointid
-      equipmentId.value = treeData.value[0]?.monitorpointid
+      const first = treeData.value[0]
+      queryParams.value.Id = first?.monitorpointid
+      equipmentId.value = first?.monitorpointid
+      deviceSerial.value = String(first?.deviceserial ?? "")
     }
   })
 }
@@ -55,7 +59,10 @@ const changeTree = (val: any) => {
   const findNode = treeData.value.find((item: any) => item.monitorpointid === val)
   createTime.value = dayjs().format("YYYY-MM-DD HH:mm:ss")
   if (findNode) {
+    deviceSerial.value = String(findNode.deviceserial ?? "")
     viewTo(findNode.lon, findNode.lat)
+  } else {
+    deviceSerial.value = ""
   }
 }
 
@@ -104,7 +111,7 @@ onMounted(() => {
     </div>
     <div class="left">
       <Left1 :equipmentId="equipmentId" />
-      <Left2 :equipmentId="equipmentId" />
+      <Left2 :device-serial="deviceSerial" />
       <Left3 :createTime="createTime" />
     </div>
     <div class="center">

@@ -2,6 +2,7 @@
 // import TagsView from "./components/TagsView/index.vue"
 import breadcrumb from "./components/Breadcrumb/index.vue"
 import Menu from "./components/Menu/index.vue"
+import UsageInstructionsDialog from "./components/UsageInstructionsDialog.vue"
 const route = useRoute()
 const router = useRouter()
 
@@ -52,49 +53,10 @@ const { logout, user, defaultRedirect } = useConfigStore()
 const toManage = () => {
   router.push(defaultRedirect)
 }
-// 下载使用说明
-const downInstructions = async () => {
-  try {
-    // TODO: 替换为实际的使用说明下载接口地址
-    const API_URL = "/api/system/downloadInstructions"
 
-    const response: any = await request({
-      url: API_URL,
-      method: "get",
-      responseType: "blob"
-    })
-
-    // 从响应头获取文件名，如果没有则使用默认文件名
-    const contentDisposition = response.headers?.["content-disposition"] || ""
-    let fileName = "使用说明.zip"
-    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
-    if (fileNameMatch && fileNameMatch[1]) {
-      // 处理编码过的文件名
-      fileName = fileNameMatch[1].replace(/['"]/g, "")
-      // 解码中文文件名
-      try {
-        fileName = decodeURIComponent(fileName)
-      } catch {
-        // 解码失败使用原始文件名
-      }
-    }
-
-    // 创建下载链接
-    const blob = new Blob([response as any])
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-
-    // 清理
-    window.URL.revokeObjectURL(url)
-    document.body.removeChild(link)
-  } catch (error) {
-    console.error("下载使用说明失败:", error)
-    ElMessage.error("下载使用说明失败，请稍后重试")
-  }
+const usageInstructionsVisible = ref(false)
+const openUsageInstructions = () => {
+  usageInstructionsVisible.value = true
 }
 onMounted(() => {
   window.addEventListener("resize", handleResize)
@@ -132,7 +94,7 @@ onUnmounted(() => {
             <el-dropdown-menu>
               <el-dropdown-item @click="toManage">管理系统</el-dropdown-item>
               <el-dropdown-item>修改密码</el-dropdown-item>
-              <el-dropdown-item @click="downInstructions">使用说明</el-dropdown-item>
+              <el-dropdown-item @click="openUsageInstructions">使用说明</el-dropdown-item>
               <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -186,6 +148,7 @@ onUnmounted(() => {
         </router-view>
       </div>
     </div>
+    <UsageInstructionsDialog v-model="usageInstructionsVisible" />
   </div>
 </template>
 

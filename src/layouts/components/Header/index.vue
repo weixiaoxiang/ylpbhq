@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { ElMessage } from "element-plus"
-import { request } from "@/utils/service"
+import UsageInstructionsDialog from "@/views/system/components/UsageInstructionsDialog.vue"
 
 defineOptions({
   name: "LogoHeader"
@@ -22,49 +21,10 @@ const intervalId = setInterval(() => {
 const toSystem = () => {
   router.push("/system")
 }
-// 下载使用说明
-const downInstructions = async () => {
-  try {
-    // TODO: 替换为实际的使用说明下载接口地址
-    const API_URL = "/api/system/downloadInstructions"
 
-    const response: any = await request({
-      url: API_URL,
-      method: "get",
-      responseType: "blob"
-    })
-
-    // 从响应头获取文件名，如果没有则使用默认文件名
-    const contentDisposition = response.headers?.["content-disposition"] || ""
-    let fileName = "使用说明.zip"
-    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
-    if (fileNameMatch && fileNameMatch[1]) {
-      // 处理编码过的文件名
-      fileName = fileNameMatch[1].replace(/['"]/g, "")
-      // 解码中文文件名
-      try {
-        fileName = decodeURIComponent(fileName)
-      } catch {
-        // 解码失败使用原始文件名
-      }
-    }
-
-    // 创建下载链接
-    const blob = new Blob([response as any])
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-
-    // 清理
-    window.URL.revokeObjectURL(url)
-    document.body.removeChild(link)
-  } catch (error) {
-    console.error("下载使用说明失败:", error)
-    ElMessage.error("下载使用说明失败，请稍后重试")
-  }
+const usageInstructionsVisible = ref(false)
+const openUsageInstructions = () => {
+  usageInstructionsVisible.value = true
 }
 onBeforeUnmount(() => {
   intervalId && clearInterval(intervalId)
@@ -72,6 +32,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- 弹窗不参与顶栏 flex 布局 -->
+  <UsageInstructionsDialog v-model="usageInstructionsVisible" />
   <div class="app-header bgbox flex h-[70px]">
     <div class="l-con flex h-full items-center gap-1 px-2 pt-1">
       <img
@@ -144,7 +106,7 @@ onBeforeUnmount(() => {
               <el-dropdown-menu>
                 <el-dropdown-item @click="toSystem">系统管理</el-dropdown-item>
                 <el-dropdown-item>修改密码</el-dropdown-item>
-                <el-dropdown-item @click="downInstructions">使用说明</el-dropdown-item>
+                <el-dropdown-item @click="openUsageInstructions">使用说明</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
