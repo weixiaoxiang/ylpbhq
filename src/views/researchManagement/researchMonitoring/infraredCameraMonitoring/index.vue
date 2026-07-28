@@ -7,6 +7,7 @@ import {
   GetIrcameraWgList
 } from "@/api"
 import { u } from "@/utils/viewerjs"
+import { buildInfraredCaptureVideoSources } from "@/utils/infrared-video"
 import AllCapture from "./AllCapture.vue"
 //@ts-ignore
 import dayjs from "dayjs"
@@ -188,6 +189,8 @@ const getList = async () => {
 }
 const showVideoPalyer = ref(false)
 const zxzpInfo = ref<any>({})
+/** 当前预览视频的可切换源列表（AI视频 / 原视频） */
+const zxzpVideoSources = computed(() => buildInfraredCaptureVideoSources(zxzpInfo.value))
 const viewZxzp = (event: any) => {
   if (event.target?.className === "img-item") {
     const itemData = event.target.dataset.item
@@ -585,7 +588,7 @@ onBeforeUnmount(() => {
           class="panzoom-exclude"
           style="width: 800px"
         >
-          <VideoPlayer :src="'/redCareamStaticUrl/' + (zxzpInfo.resultfile ? zxzpInfo.resultfile : zxzpInfo.fileurl)" />
+          <VideoPlayer :sources="zxzpVideoSources" />
         </div>
       </template>
     </Modal>

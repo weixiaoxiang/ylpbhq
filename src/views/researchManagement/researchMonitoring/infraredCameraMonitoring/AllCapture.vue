@@ -10,6 +10,7 @@ import {
   InfraredCameraDownloadFilesAsZip
 } from "@/api"
 import InfraredSpeciesHeatMap from "./InfraredSpeciesHeatMap.vue"
+import { buildInfraredCaptureVideoSources } from "@/utils/infrared-video"
 import { Search } from "@element-plus/icons-vue"
 import dayjs from "dayjs"
 interface Props {
@@ -435,6 +436,8 @@ const exportData = async (type: string) => {
 
 const zxzpInfo = ref<any>({})
 const showVideoPalyer = ref(false)
+/** 当前预览视频的可切换源列表（AI视频 / 原视频） */
+const zxzpVideoSources = computed(() => buildInfraredCaptureVideoSources(zxzpInfo.value))
 const view = (item: any) => {
   if (item.filebmp === "图片") {
     const urls = ["/redCareamStaticUrl/" + (item.resultfile ? item.resultfile : item.fileurl)]
@@ -882,9 +885,7 @@ onMounted(() => {
             class="panzoom-exclude"
             style="width: 800px"
           >
-            <VideoPlayer
-              :src="'/redCareamStaticUrl/' + (zxzpInfo.resultfile ? zxzpInfo.resultfile : zxzpInfo.fileurl)"
-            />
+            <VideoPlayer :sources="zxzpVideoSources" />
           </div>
         </template>
       </Modal>
