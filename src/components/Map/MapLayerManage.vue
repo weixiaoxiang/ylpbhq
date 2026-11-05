@@ -4,6 +4,8 @@ import { GetSys_LayermanagerDirec, GetZH_LayerManager } from "@/api"
 interface Props {
   filterId?: number | null // 过滤id
   initCheckedKeys?: any[] | null // 默认选中节点
+  /** 只保留名称匹配的图层及其父节点，不传则展示全部 */
+  layerNames?: string[] | null
   modular?: string // 模块名称
   initShow?: boolean // 默认是否显示图层选择
   initLegendCheckbox?: boolean // 是否显示图层选择
@@ -79,7 +81,33 @@ const getMapTreeData = async () => {
       item.legend = legendcolour
     }
   })
-  const treeData = arrayToTree(response, {
+  // 按名称裁剪图层树：保留匹配节点、它的上级，以及下级叶子（目录本身不能当图层请求）
+  let source = response
+  if (props.layerNames?.length) {
+    const names = props.layerNames
+    const byId = new Map(source.map((item: any) => [item.id, item]))
+    const keep = new Set<number>()
+    const keepDescendants = (id: number) => {
+      source.forEach((child: any) => {
+        if (child.parentid === id && !keep.has(child.id)) {
+          keep.add(child.id)
+          keepDescendants(child.id)
+        }
+      })
+    }
+    source.forEach((item: any) => {
+      const matched = names.some((name) => String(item.mc || "").includes(name))
+      if (!matched) return
+      let current: any = item
+      while (current) {
+        keep.add(current.id)
+        current = byId.get(current.parentid)
+      }
+      keepDescendants(item.id)
+    })
+    source = source.filter((item: any) => keep.has(item.id))
+  }
+  const treeData = arrayToTree(source, {
     id: "id",
     children: "children",
     pid: "parentid"
@@ -93,11 +121,22 @@ const getMapTreeData = async () => {
     if (!mapTreeData.value || mapTreeData.value?.length === 0) {
       return
     }
-    if (props.initCheckedKeys) {
-      treeRef.value.setCheckedKeys(props.initCheckedKeys)
-      // 遍历每一个
-      props.initCheckedKeys.forEach((item: any) => {
-        const nodes: any = findNodes(mapTreeData.value, item, { key: "id" })
+    // 目录节点（如保护区界线 id 33）没有图层数据，只能勾选真正的叶子图层
+    const parentIds = new Set(source.map((item: any) => item.parentid))
+    const checkedKeys = props.initCheckedKeys?.length
+      ? props.initCheckedKeys.filter((id: number) => !parentIds.has(id))
+      : props.layerNames?.length
+        ? source
+            .filter(
+              (item: any) =>
+                !parentIds.has(item.id) && props.layerNames!.some((name) => String(item.mc || "").includes(name))
+            )
+            .map((item: any) => item.id)
+        : null
+    if (checkedKeys?.length) {
+      treeRef.value.setCheckedKeys(checkedKeys)
+      checkedKeys.forEach((keyId: number) => {
+        const nodes = findNodes(mapTreeData.value, keyId, { key: "id" })
         if (nodes?.length > 0) {
           const descendants = findDescendants(mapTreeData.value, nodes[0].id, { hasChildren: false })
           descendants?.push(nodes[0])

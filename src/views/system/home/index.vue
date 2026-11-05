@@ -4,9 +4,7 @@ defineOptions({
 })
 </script>
 <template>
-  <div class="section">
-		系统管理首页
-	</div>
+  <div class="section">系统管理首页</div>
 </template>
 
 <style lang="scss" scoped>

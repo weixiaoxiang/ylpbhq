@@ -9,20 +9,20 @@
 //   });
 // }
 //上传图片
-export function UploadPicToFile(data:any) {
+export function UploadPicToFile(data: any) {
   return request({
     url: `/Img/UploadPicToFile`,
     method: "post",
     data,
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+    headers: { "Content-Type": "multipart/form-data" }
+  })
 }
 //上传视频
-export function UploadVideo(data:any) {
+export function UploadVideo(data: any) {
   return request({
     url: `/Img/UploadVideo`,
     method: "post",
     data,
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+    headers: { "Content-Type": "multipart/form-data" }
+  })
 }

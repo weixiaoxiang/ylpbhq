@@ -38,8 +38,8 @@ body {
   background-color: var(--body-bg-color);
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
-    sans-serif !important;
+  font-family:
+    "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif !important;
   @extend %scrollbar;
 }
 // 隐藏X水平滚动条
@@ -126,6 +126,51 @@ body {
     background: #204778 !important;
   }
 }
+
+// 系统管理（浅色后台）下拉：勿使用 custom-select-popper
+.system-select-popper {
+  &.el-select__popper.el-popper {
+    background: var(--el-bg-color-overlay) !important;
+    border: 1px solid var(--el-border-color-light) !important;
+    box-shadow: var(--el-box-shadow-light) !important;
+  }
+
+  .el-select-dropdown__wrap,
+  .el-select-dropdown__list {
+    background-color: var(--el-bg-color-overlay) !important;
+  }
+
+  .el-select-dropdown__item {
+    color: var(--el-text-color-regular) !important;
+    background: transparent !important;
+    font-weight: 400;
+  }
+
+  .el-select-dropdown__item.is-hovering,
+  .el-select-dropdown__item:hover {
+    background: var(--el-fill-color-light) !important;
+    color: var(--el-text-color-primary) !important;
+  }
+
+  .el-select-dropdown__item.is-selected {
+    color: var(--el-color-primary) !important;
+    font-weight: 600;
+    background: var(--el-color-primary-light-9) !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+  }
+
+  .el-popper__arrow::before {
+    border-color: var(--el-border-color-light) !important;
+    background: var(--el-bg-color-overlay) !important;
+  }
+
+  .el-select-dropdown__empty {
+    color: var(--el-text-color-secondary) !important;
+    background: var(--el-bg-color-overlay) !important;
+  }
+}
+
 // 自定义el-date-picker下拉框的样式1
 .custom-datepicker-popper {
   box-shadow: none !important;

@@ -1,7 +1,7 @@
-import ImageViewer from './src/ImageViewer.vue'
-import { isClient } from '@/utils/is'
-import { createVNode, render, VNode } from 'vue'
-import { ImageViewerProps } from './src/types'
+import ImageViewer from "./src/ImageViewer.vue"
+import { isClient } from "@/utils/is"
+import { createVNode, render, VNode } from "vue"
+import { ImageViewerProps } from "./src/types"
 
 let instance: Nullable<VNode> = null
 
@@ -18,7 +18,7 @@ export function createImageViewer(options: ImageViewerProps) {
   } = options
 
   const propsData: Partial<ImageViewerProps> = {}
-  const container = document.createElement('div')
+  const container = document.createElement("div")
   propsData.urlList = urlList
   propsData.initialIndex = initialIndex
   propsData.infinite = infinite

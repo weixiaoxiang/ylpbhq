@@ -161,6 +161,30 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           target: "http://114.115.134.190:8006",
           changeOrigin: true,
           rewrite: (path) => path.replace(new RegExp("^" + "/agoraToken"), "")
+        },
+        /** 大鲵无人机业务接口，不占用本项目 /api */
+        "/danieApi": {
+          target: "http://114.98.86.88:9000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/danieApi/, "")
+        },
+        /** 大鲵抓拍图片、录像，对应原项目 /fileApi */
+        "/danieFileApi": {
+          target: "http://114.98.86.88:9000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/danieFileApi/, "")
+        },
+        /** 大鲵 fileApi 路径（部分页面仍用 /fileApi 前缀） */
+        "/fileApi": {
+          target: "http://114.98.86.88:9000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/fileApi/, "")
+        },
+        /** 大疆司空 OpenAPI（航飞计划） */
+        "/uavApi": {
+          target: "https://es-flight-api-cn.djigate.com",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/uavApi/, "")
         }
       },
       /** 预热常用文件，提高初始页面加载速度 */

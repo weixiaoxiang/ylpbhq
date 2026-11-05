@@ -1500,10 +1500,10 @@ export function GetPanoramaList(params?: any): any {
     params
   })
 }
-// BackgroundResources/GetFamousTreesQjListByPage
-export function GetFamousTreesQjListByPage(params?: any): any {
+// BackgroundResources/GetFamousTreesQjListByGroup
+export function GetFamousTreesQjListByGroup(params?: any): any {
   return request({
-    url: "BackgroundResources/GetFamousTreesQjListByPage",
+    url: "BackgroundResources/GetFamousTreesQjListByGroup",
     method: "get",
     params
   })

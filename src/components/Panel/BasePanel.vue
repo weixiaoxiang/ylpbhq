@@ -39,6 +39,7 @@ withDefaults(defineProps<Props>(), {
     </PanelTitle>
     <div class="panel-contain flex-1 overflow-hidden p-2">
       <slot name="contain" />
+      <slot />
     </div>
   </div>
 </template>

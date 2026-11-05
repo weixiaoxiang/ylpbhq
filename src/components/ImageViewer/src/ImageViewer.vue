@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { PropType } from 'vue'
+import { PropType } from "vue"
 // import { propTypes } from '@/utils/propTypes'
 
-defineOptions({ name: 'ImageViewer' })
+defineOptions({ name: "ImageViewer" })
 
 // const props = defineProps({
 //   urlList: {
@@ -61,5 +61,9 @@ const close = () => {
 </script>
 
 <template>
-  <ElImageViewer v-if="show" v-bind="getBindValue" @close="close" />
+  <ElImageViewer
+    v-if="show"
+    v-bind="getBindValue"
+    @close="close"
+  />
 </template>

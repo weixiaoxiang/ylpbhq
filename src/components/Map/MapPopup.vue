@@ -444,7 +444,9 @@ watch(
               element-loading-svg-view-box="-10, -10, 50, 50"
               element-loading-background="rgba(9, 20, 31, 0.6)"
               class="hk-video"
-              v-if="currentCoLocationDeviceInfo?.detail?.statu === '在线' && currentCoLocationDeviceInfo?.detail?.videoUrl"
+              v-if="
+                currentCoLocationDeviceInfo?.detail?.statu === '在线' && currentCoLocationDeviceInfo?.detail?.videoUrl
+              "
             >
               <hkVideo
                 style="width: 100%; height: 100%"

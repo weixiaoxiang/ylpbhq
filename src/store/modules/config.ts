@@ -34,17 +34,20 @@ let sortMenuList: any,
   systemList: any,
   noSystemList: any,
   rootList: any
-// 将MENULIST根据sort升序
-sortMenuList = MENULIST.sort((a: any, b: any) => a.sort - b.sort)
-// 将sortMenuList筛选effective!==false的,菜单中不展示/login等页面
-effectiveMenuList = sortMenuList.filter((item: any) => item.effective)
-// 菜单列表
-menuList = arrayToTree(
-  JSON.parse(JSON.stringify(effectiveMenuList)),
-  { id: "id", pid: "pId", children: "children" },
-  true
-)
-fullPathRootList = addFullPath(menuList)
+
+/** 根据 MENULIST 重建侧栏树（登录后可与后台菜单 id 对齐） */
+function rebuildEffectiveMenuTree() {
+  sortMenuList = MENULIST.sort((a: any, b: any) => a.sort - b.sort)
+  effectiveMenuList = sortMenuList.filter((item: any) => item.effective)
+  menuList = arrayToTree(
+    JSON.parse(JSON.stringify(effectiveMenuList)),
+    { id: "id", pid: "pId", children: "children" },
+    true
+  )
+  fullPathRootList = addFullPath(menuList)
+}
+
+rebuildEffectiveMenuTree()
 // 完整列表
 allList = arrayToTree(JSON.parse(JSON.stringify(sortMenuList)), { id: "id", pid: "pId", children: "children" }, false)
 systemList = findNodes(allList, "System", { key: "componentName" })
@@ -178,10 +181,28 @@ export const useConfigStore = defineStore(
       classB: [], //当前页面所属二级菜单集合
       classC: [] //当前页面所属三级菜单集合
     })
-    // todo:需要对接接口
+    /** 用后台菜单 id/pId 覆盖 json 中同 componentName 的项，保证 routeIds 校验通过 */
+    const syncMenuIdsFromBackend = async () => {
+      try {
+        const { response } = await menuApi.getDataTree({ effective: true })
+        if (!response?.length) return
+        response.forEach((item: any) => {
+          MENULIST.forEach((local: any) => {
+            if (item.componentName === local.componentName) {
+              local.id = item.Id ?? item.id
+              local.pId = item.pId
+            }
+          })
+        })
+        rebuildEffectiveMenuTree()
+      } catch {
+        /* 接口不可用时仍使用 menu.json 内置 id */
+      }
+    }
+
     const getMenus = async () => {
-      // await getRouteTree()
       if (menus.value.classA.length > 0) return
+      await syncMenuIdsFromBackend()
       menus.value.classA = fullPathRootList
     }
     // 获得所有菜单

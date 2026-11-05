@@ -59,7 +59,6 @@ const toolbarConfig = reactive({
 })
 const editorConfig = reactive({ placeholder: "请输入内容..." })
 
-
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
   const editor = editorRef.value
@@ -91,30 +90,30 @@ const handleCreated = (editor: any) => {
   }
   // 设置滚动条样式
   .w-e-scroll,
-    .w-e-select-list {
-      // 整个滚动条
-      &::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-        cursor: pointer;
-      }
-      // 滚动条上的滚动滑块
-      &::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: rgba(51, 57, 69, 0.2);
-      }
-      &::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(51, 57, 69, 0.3);
-        cursor: pointer;
-      }
-      &::-webkit-scrollbar-thumb:active {
-        background-color: rgba(51, 57, 69, 0.3);
-        cursor: pointer;
-      }
-      // 当同时有垂直滚动条和水平滚动条时交汇的部分
-      &::-webkit-scrollbar-corner {
-        background-color: transparent;
-      }
+  .w-e-select-list {
+    // 整个滚动条
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      cursor: pointer;
     }
+    // 滚动条上的滚动滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(51, 57, 69, 0.2);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(51, 57, 69, 0.3);
+      cursor: pointer;
+    }
+    &::-webkit-scrollbar-thumb:active {
+      background-color: rgba(51, 57, 69, 0.3);
+      cursor: pointer;
+    }
+    // 当同时有垂直滚动条和水平滚动条时交汇的部分
+    &::-webkit-scrollbar-corner {
+      background-color: transparent;
+    }
+  }
 }
 </style>

@@ -192,21 +192,21 @@ export class DrawOLShape {
         options.tooltip === false
           ? false
           : {
-            point: options.tooltip?.point || "单击完成点标注",
-            linestring: options.tooltip?.line || "单击确定起点，双击结束绘制",
-            polygon: options.tooltip?.polygon || "单击确定起点，双击结束绘制",
-            circle: options.tooltip?.circle || "单击确定圆心，移动鼠标确定半径，再次单击结束绘制",
-            rect: options.tooltip?.rect || "单击确定起点，移动鼠标确定矩形，再次单击结束绘制",
-            square: options.tooltip?.square || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
-            triangle: options.tooltip?.triangle || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
-            hexagon: options.tooltip?.hexagon || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
-            star: options.tooltip?.star || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
-            multipolygon:
-              options.tooltip?.multipolygon || "单击确定起点，双击结束当前多边形绘制，按 ESC 完成整体绘制",
-            multilinestring:
-              options.tooltip?.multilinestring || "单击确定起点，双击结束当前线段绘制，按 ESC 完成整体绘制",
-            multipoint: options.tooltip?.multipoint || "单击添加点，按 ESC 完成整体绘制"
-          },
+              point: options.tooltip?.point || "单击完成点标注",
+              linestring: options.tooltip?.line || "单击确定起点，双击结束绘制",
+              polygon: options.tooltip?.polygon || "单击确定起点，双击结束绘制",
+              circle: options.tooltip?.circle || "单击确定圆心，移动鼠标确定半径，再次单击结束绘制",
+              rect: options.tooltip?.rect || "单击确定起点，移动鼠标确定矩形，再次单击结束绘制",
+              square: options.tooltip?.square || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
+              triangle: options.tooltip?.triangle || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
+              hexagon: options.tooltip?.hexagon || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
+              star: options.tooltip?.star || "单击确定中心，移动鼠标确定大小，再次单击结束绘制",
+              multipolygon:
+                options.tooltip?.multipolygon || "单击确定起点，双击结束当前多边形绘制，按 ESC 完成整体绘制",
+              multilinestring:
+                options.tooltip?.multilinestring || "单击确定起点，双击结束当前线段绘制，按 ESC 完成整体绘制",
+              multipoint: options.tooltip?.multipoint || "单击添加点，按 ESC 完成整体绘制"
+            },
       // 是否清除上一次绘制
       clearable: options.clearable ?? true,
       // 是否单次绘制，默认false，对于多要素绘制，该参数无效
@@ -611,14 +611,21 @@ export class DrawOLShape {
         if (!drawOptions.buffer && (this.options.select || this.options.modify || this.options.translate)) {
           // 延迟，避免当前绘制的结果还未添加到图层中，造成initInteractions逻辑错误
           setTimeout(() => {
-            this.initInteractions([feature], this.options.select, this.options.modify, this.options.translate, {
-              select: drawOptions.select,
-              modifystart: drawOptions.modifystart,
-              modifyend: drawOptions.modifyend,
-              translatestart: drawOptions.translatestart,
-              translating: drawOptions.translating,
-              translateend: drawOptions.translateend
-            }, true)
+            this.initInteractions(
+              [feature],
+              this.options.select,
+              this.options.modify,
+              this.options.translate,
+              {
+                select: drawOptions.select,
+                modifystart: drawOptions.modifystart,
+                modifyend: drawOptions.modifyend,
+                translatestart: drawOptions.translatestart,
+                translating: drawOptions.translating,
+                translateend: drawOptions.translateend
+              },
+              true
+            )
           }, 100)
         }
       }
@@ -642,7 +649,14 @@ export class DrawOLShape {
    * @param {Function} callbacks.translating - 平移过程事件回调
    * @param {Function} callbacks.translateend - 平移结束事件回调
    */
-  initInteractions(features = [], enableSelect = false, enableModify = false, enableTranslate = false, isAdd = true, callbacks = {}) {
+  initInteractions(
+    features = [],
+    enableSelect = false,
+    enableModify = false,
+    enableTranslate = false,
+    isAdd = true,
+    callbacks = {}
+  ) {
     // 清除现有的交互和监听器
     this.clearInteractions()
     // 添加要素到图层
@@ -1281,14 +1295,21 @@ export class DrawOLShape {
     this.multiPolygonFeatures = []
     // 如果非缓冲区且有交互，则初始化交互
     if (!options.buffer && (this.options.select || this.options.modify || this.options.translate)) {
-      this.initInteractions([finalFeature], this.options.select, this.options.modify, this.options.translate, {
-        select: options.select,
-        modifystart: options.modifystart,
-        modifyend: options.modifyend,
-        translatestart: options.translatestart,
-        translating: options.translating,
-        translateend: options.translateend
-      }, true)
+      this.initInteractions(
+        [finalFeature],
+        this.options.select,
+        this.options.modify,
+        this.options.translate,
+        {
+          select: options.select,
+          modifystart: options.modifystart,
+          modifyend: options.modifyend,
+          translatestart: options.translatestart,
+          translating: options.translating,
+          translateend: options.translateend
+        },
+        true
+      )
     }
   }
   /**
@@ -1430,14 +1451,21 @@ export class DrawOLShape {
     this.multiLineStringFeatures = []
 
     if (!options.buffer && (this.options.select || this.options.modify || this.options.translate)) {
-      this.initInteractions([finalFeature], this.options.select, this.options.modify, this.options.translate, {
-        select: options.select,
-        modifystart: options.modifystart,
-        modifyend: options.modifyend,
-        translatestart: options.translatestart,
-        translating: options.translating,
-        translateend: options.translateend
-      }, true)
+      this.initInteractions(
+        [finalFeature],
+        this.options.select,
+        this.options.modify,
+        this.options.translate,
+        {
+          select: options.select,
+          modifystart: options.modifystart,
+          modifyend: options.modifyend,
+          translatestart: options.translatestart,
+          translating: options.translating,
+          translateend: options.translateend
+        },
+        true
+      )
     }
   }
 
@@ -1580,14 +1608,21 @@ export class DrawOLShape {
     this.multiPointFeatures = []
 
     if (!options.buffer && (this.options.select || this.options.modify || this.options.translate)) {
-      this.initInteractions([finalFeature], this.options.select, this.options.modify, this.options.translate, {
-        select: options.select,
-        modifystart: options.modifystart,
-        modifyend: options.modifyend,
-        translatestart: options.translatestart,
-        translating: options.translating,
-        translateend: options.translateend
-      }, true)
+      this.initInteractions(
+        [finalFeature],
+        this.options.select,
+        this.options.modify,
+        this.options.translate,
+        {
+          select: options.select,
+          modifystart: options.modifystart,
+          modifyend: options.modifyend,
+          translatestart: options.translatestart,
+          translating: options.translating,
+          translateend: options.translateend
+        },
+        true
+      )
     }
   }
 

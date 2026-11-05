@@ -1,57 +1,60 @@
 <script lang="ts" setup>
-import { GetFamousTreesQjListByPage } from "@/api"
+import { GetFamousTreesQjListByGroup } from "@/api"
 import { nanoid } from "nanoid"
 
 const currentWztp = ref<any>({})
 const wztpList = ref<any>([])
 // 获得全景列表
-let originPanoramaList: any = []
-const page = ref<any>(1)
+let originPanoramaList: any[] = []
+const page = ref(1)
 const pageSize = 3
-const getPanoramaList = async () => {
-  const { response } = await GetFamousTreesQjListByPage()
-  response.forEach((item: any) => {
-    if (item.springqj) {
-      originPanoramaList.push({
-        ...item,
-        title: item.mc + "（春）",
-        qjpath: item.springqj,
-        id: nanoid()
-      })
-    }
-    if (item.summerqj) {
-      originPanoramaList.push({
-        ...item,
-        title: item.mc + "（夏）",
-        qjpath: item.summerqj,
-        id: nanoid()
-      })
-    }
-    if (item.autumnqj) {
-      originPanoramaList.push({
-        ...item,
-        title: item.mc + "（秋）",
-        qjpath: item.autumnqj,
-        id: nanoid()
-      })
-    }
-    if (item.winterqj) {
-      item.title = item.mc + "（冬）"
-      originPanoramaList.push({
-        ...item,
-        title: item.mc + "（冬）",
-        qjpath: item.winterqj,
-        id: nanoid()
-      })
-    }
-    delete item.springqj
-    delete item.summerqj
-    delete item.autumnqj
-    delete item.winterqj
-  })
-  // 不影响原数据originPanoramaList的数据
+
+/** 四季全景字段配置 */
+const seasonPanoramaFields = [
+  { field: "springqj", suffix: "（春）" },
+  { field: "summerqj", suffix: "（夏）" },
+  { field: "autumnqj", suffix: "（秋）" },
+  { field: "winterqj", suffix: "（冬）" }
+] as const
+
+/** 判断全景路径是否有效，无效则不展示 */
+function isValidPanoramaPath(path?: string | null): boolean {
+  if (path == null) return false
+  const trimmed = String(path).trim()
+  if (!trimmed) return false
+  return !["null", "undefined", "none", "-"].includes(trimmed.toLowerCase())
+}
+
+/** 构建单条可展示的全景数据 */
+function buildPanoramaItem(item: any, qjpath: string, suffix: string) {
+  const { springqj, summerqj, autumnqj, winterqj, ...rest } = item
+  return {
+    ...rest,
+    title: `${item.mc}${suffix}`,
+    qjpath,
+    id: nanoid()
+  }
+}
+
+/** 更新当前页列表与默认选中项 */
+function updatePageList() {
   wztpList.value = originPanoramaList.slice((page.value - 1) * pageSize, page.value * pageSize)
-  currentWztp.value = wztpList.value[0]
+  currentWztp.value = wztpList.value[0] || {}
+}
+
+const getPanoramaList = async () => {
+  originPanoramaList = []
+  const { response } = await GetFamousTreesQjListByGroup()
+  ;(response || []).forEach((item: any) => {
+    seasonPanoramaFields.forEach(({ field, suffix }) => {
+      const qjpath = item[field]
+      if (isValidPanoramaPath(qjpath)) {
+        originPanoramaList.push(buildPanoramaItem(item, qjpath, suffix))
+      }
+    })
+  })
+  page.value = 1
+  updatePageList()
 }
 // 上一页下一页
 const paging = (type: string) => {
@@ -68,15 +71,51 @@ const paging = (type: string) => {
       return ElMessage.warning("已经是最后一页")
     }
   }
-  // 不影响原数据originPanoramaList的数据
-  wztpList.value = originPanoramaList.slice((page.value - 1) * pageSize, page.value * pageSize)
+  // 翻页后同步更新当前页展示列表与选中项
+  updatePageList()
 }
 // 切换全景
 const changePanorama = (item: any) => {
   currentWztp.value = item
 }
+
+/** 全景展示容器，用于全屏切换 */
+const panoramaBoxRef = ref<HTMLElement | null>(null)
+const isPanoramaFullscreen = ref(false)
+
+/** 切换全景区域全屏展示 */
+function togglePanoramaFullscreen() {
+  const element = panoramaBoxRef.value
+  if (!element) return
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+    return
+  }
+
+  if (element.requestFullscreen) {
+    element.requestFullscreen()
+    return
+  }
+
+  ElMessage.warning("当前浏览器不支持全屏")
+}
+
+/** 同步全屏状态，用于切换按钮文案 */
+function handlePanoramaFullscreenChange() {
+  isPanoramaFullscreen.value = document.fullscreenElement === panoramaBoxRef.value
+}
+
 onMounted(() => {
   getPanoramaList() // 获得全景列表
+  document.addEventListener("fullscreenchange", handlePanoramaFullscreenChange)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener("fullscreenchange", handlePanoramaFullscreenChange)
+  if (document.fullscreenElement === panoramaBoxRef.value) {
+    document.exitFullscreen()
+  }
 })
 </script>
 
@@ -156,16 +195,31 @@ onMounted(() => {
           />
         </div>
       </div>
-      <div class="part-bd2">
+      <div
+        ref="panoramaBoxRef"
+        class="part-bd2"
+        :class="{ 'is-fullscreen': isPanoramaFullscreen }"
+      >
+        <button
+          v-if="isValidPanoramaPath(currentWztp.qjpath)"
+          type="button"
+          class="panorama-fullscreen-btn"
+          @click.stop="togglePanoramaFullscreen"
+        >
+          {{ isPanoramaFullscreen ? "退出全屏" : "全屏" }}
+        </button>
         <iframe
-          v-if="currentWztp.qjpath"
+          v-if="isValidPanoramaPath(currentWztp.qjpath)"
           :key="currentWztp.id"
           class="iframe"
           :src="'/statisUrl/' + currentWztp.qjpath"
           frameborder="0"
         ></iframe>
       </div>
-      <div class="part-bd3 part-ban">
+      <div
+        v-if="currentWztp.mc"
+        class="part-bd3 part-ban"
+      >
         <p>
           名称： {{ currentWztp.mc }}，拉丁名：<span class="latin-text">{{ currentWztp.ldmc }}</span
           >，经度：{{ currentWztp.lon }}，纬度：{{ currentWztp.lat }}，科名：{{ currentWztp.ke }}，属名：{{
@@ -322,14 +376,62 @@ onMounted(() => {
       }
     }
     .part-bd2 {
+      position: relative;
       height: 473px;
-      // .el-image {
-      //   width: 100%;
-      //   height: 100%;
-      // }
+      background-color: #1a1a1a;
+
+      .panorama-fullscreen-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 72px;
+        height: 34px;
+        padding: 0 14px;
+        border: 1px solid rgba(203, 133, 88, 0.85);
+        border-radius: 17px;
+        background: rgba(166, 116, 53, 0.88);
+        color: #fff7eb;
+        font-size: 0.7292vw;
+        font-family: "楷体", serif;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:hover {
+          background: rgba(203, 133, 88, 0.95);
+          border-color: #f0c89b;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32);
+        }
+      }
+
       .iframe {
         width: 100%;
         height: 100%;
+      }
+
+      &.is-fullscreen,
+      &:fullscreen,
+      &:-webkit-full-screen {
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+
+        .panorama-fullscreen-btn {
+          top: 20px;
+          right: 20px;
+        }
+
+        .iframe {
+          width: 100%;
+          height: 100%;
+        }
       }
     }
     .part-bd3 {

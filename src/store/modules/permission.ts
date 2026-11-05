@@ -1,14 +1,14 @@
 // import { useRouter } from "vue-router";
 // import type { RouteRecordRaw } from "vue-router";
 // type RouteRecordRaw = typeof RouteRecordRaw;
-import { defineStore } from "pinia";
-import { constantRoutes } from "@/router";
-import  store  from "@/store";
+import { defineStore } from "pinia"
+import { constantRoutes } from "@/router"
+import store from "@/store"
 // import { handleTree } from "@/utils/tree";
 // import { getMenuPermissionssByUserIdApi } from "@/api/index";
 // import { flatMultiLevelRoutes, generateRoute } from "@/utils/routerHelper";
-const modules = import.meta.glob("../../views/**/**.vue");
-const Layout = () => import("@/layouts/index.vue");
+const modules = import.meta.glob("../../views/**/**.vue")
+const Layout = () => import("@/layouts/index.vue")
 
 // const ParentView = () => import("@/layout/components/ParentView/index.vue");
 /**
@@ -22,16 +22,16 @@ const hasPermission = (roles: string[], route: any) => {
   if (route.meta && route.meta.roles) {
     // 角色【超级管理员】拥有所有权限，忽略校验
     if (roles.includes("ROOT")) {
-      return true;
+      return true
     }
     return roles.some((role) => {
       if (route.meta?.roles !== undefined) {
-        return (route.meta.roles as string[]).includes(role);
+        return (route.meta.roles as string[]).includes(role)
       }
-    });
+    })
   }
-  return false;
-};
+  return false
+}
 
 /**
  * 递归过滤有权限的异步(动态)路由
@@ -78,29 +78,29 @@ const hasPermission = (roles: string[], route: any) => {
 // setup
 export const usePermissionStore = defineStore("permission", () => {
   // state
-  const homeRoutes = ref<any[]>([]);
-  const routes = ref<any[]>([]);
-  const perms = ref<Array<string>>([]); // 用户权限编码集合 → 判断按钮权限
+  const homeRoutes = ref<any[]>([])
+  const routes = ref<any[]>([])
+  const perms = ref<Array<string>>([]) // 用户权限编码集合 → 判断按钮权限
 
   // actions
   async function setRoutes(newRoutes: any[]) {
-    routes.value = constantRoutes.concat(newRoutes);
+    routes.value = constantRoutes.concat(newRoutes)
   }
 
   // 递归过滤树
   function filterData2(arr, menu) {
     return arr.filter((item) => {
       if (item.children) {
-        item.children = filterData2(item.children, menu);
+        item.children = filterData2(item.children, menu)
       }
       if (!item.meta || !item.meta.title) {
-        return true;
+        return true
       }
-      let index = menu.findIndex((i) => i.name == item.meta.title);
+      let index = menu.findIndex((i) => i.name == item.meta.title)
       if (index != -1) {
-        return true;
+        return true
       }
-    });
+    })
   }
   /**
    * 生成动态路由
@@ -152,19 +152,19 @@ export const usePermissionStore = defineStore("permission", () => {
   //     const accessedRoutes = filterAsyncRoutes(route);
   //     setRoutes(accessedRoutes);
   //     resolve(accessedRoutes);
-     
+
   //   });
   // }
   /**
    * 混合模式左侧菜单
    */
-  const mixLeftMenu = ref<any[]>([]);
+  const mixLeftMenu = ref<any[]>([])
   function getMixLeftMenu(activeTop: string) {
     routes.value.forEach((item) => {
       if (item.path === activeTop) {
-        mixLeftMenu.value = item.children || [];
+        mixLeftMenu.value = item.children || []
       }
-    });
+    })
   }
   return {
     homeRoutes,
@@ -173,11 +173,11 @@ export const usePermissionStore = defineStore("permission", () => {
     setRoutes,
     // generateRoutes,
     getMixLeftMenu,
-    mixLeftMenu,
-  };
-});
+    mixLeftMenu
+  }
+})
 
 // 非setup
 export function usePermissionStoreHook() {
-  return usePermissionStore(store);
+  return usePermissionStore(store)
 }
