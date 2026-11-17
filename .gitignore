@@ -6,9 +6,13 @@ dist
 .git/*
 pnpm-lock.yaml
 
-# 环境变量（勿提交仓库）
+# 环境变量（勿提交仓库，含司空/大鲵等业务密钥）
 .env
-.env.development
+.env.*
+!.env.example
+
+# Cursor 本地技能与编辑器配置（非项目交付物）
+.cursor/
 
 src/autoImport
 .eslintrc-auto-import.js

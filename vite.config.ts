@@ -162,21 +162,9 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           changeOrigin: true,
           rewrite: (path) => path.replace(new RegExp("^" + "/agoraToken"), "")
         },
-        /** 大鲵无人机业务接口，不占用本项目 /api */
-        "/danieApi": {
-          target: "http://114.98.86.88:9000",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/danieApi/, "")
-        },
-        /** 大鲵抓拍图片、录像，对应原项目 /fileApi */
-        "/danieFileApi": {
-          target: "http://114.98.86.88:9000",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/danieFileApi/, "")
-        },
-        /** 大鲵 fileApi 路径（部分页面仍用 /fileApi 前缀） */
+        /** 无人机抓拍图片、录像（与主后端同源） */
         "/fileApi": {
-          target: "http://114.98.86.88:9000",
+          target: "http://39.145.39.46:9001",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/fileApi/, "")
         },

@@ -17,8 +17,6 @@ interface ImportMetaEnv {
   readonly VITE_PUBLIC_PATH: string
   /** 大疆司空 OpenAPI Token，仅 AI 无人机航飞计划使用 */
   readonly VITE_SIKONG_TOKEN: string
-  /** 大鲵无人机业务接口 token，未配置时 /danieApi 会返回 401 */
-  readonly VITE_DANIE_TOKEN?: string
 }
 
 interface ImportMeta {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Edit, Refresh, Search } from "@element-plus/icons-vue"
-import { getWaylines, putWaylines, type UavWaylineRow } from "@/api/system/uav-drone"
-import { isDanieOk } from "@/utils/ai-drone/response"
+import { uavApi, type UavWaylineRow } from "@/api/uav"
+import { isUavApiOk } from "@/utils/ai-drone/response"
 
 /** 系统管理 — 航线配置（逻辑对齐大鲵 uavWaylineManage） */
 defineOptions({ name: "SystemUavWayline" })
@@ -30,11 +30,11 @@ async function getList() {
   loading.value = true
   tableData.value = []
   try {
-    const res = (await getWaylines({ ...queryForm })) as {
+    const res = (await uavApi.GetWaylines({ ...queryForm })) as {
       success?: boolean
       response?: UavWaylineRow[]
     }
-    if (isDanieOk(res) && Array.isArray(res.response)) {
+    if (isUavApiOk(res) && Array.isArray(res.response)) {
       tableData.value = res.response
     }
   } finally {
@@ -75,11 +75,11 @@ async function commitHeightEdit(row: UavWaylineRow) {
 
   loading.value = true
   try {
-    const res = (await putWaylines({
+    const res = (await uavApi.PutWaylines({
       wayline_uuid: row.wayline_uuid,
       wayline_height: next ?? ""
     })) as { success?: boolean; msg?: string }
-    if (isDanieOk(res)) {
+    if (isUavApiOk(res)) {
       ElMessage.success(res.msg || "保存成功")
     } else {
       row.wayline_height = prev

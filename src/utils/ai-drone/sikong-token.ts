@@ -1,6 +1,16 @@
+import { isSikongUuid } from "@/utils/ai-drone/sikong-field-pickers"
+
 /** 司空 OpenAPI Token，只读环境变量，不使用鹞落坪登录 token */
 export function getSikongToken(): string {
   return import.meta.env.VITE_SIKONG_TOKEN || ""
+}
+
+/** 飞行控制等司空接口：校验 token + projectUuid 齐备 */
+export function resolveSikongAuth(projectUuid?: string): SikongAuthHeader | null {
+  const token = getSikongToken().trim()
+  const uuid = (projectUuid || "").trim()
+  if (!token || !uuid || !isSikongUuid(uuid)) return null
+  return { token, projectUuid: uuid }
 }
 
 /** 下载司空航线文件时需带的请求头参数 */

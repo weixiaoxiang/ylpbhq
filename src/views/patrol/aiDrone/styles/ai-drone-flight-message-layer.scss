@@ -1,0 +1,13 @@
+/* 地图模式全屏时：凡 MessageBox 遮罩一律置顶（返航确认等） */
+body.ai-drone-map-mode-active .el-overlay.is-message-box {
+  z-index: 200000 !important;
+}
+
+body.ai-drone-map-mode-active .el-message {
+  z-index: 200001 !important;
+}
+
+/* 飞行控制专用确认框（:has 精确匹配） */
+.el-overlay.is-message-box:has(.drone-flight-command-message-box) {
+  z-index: 200000 !important;
+}

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { Search } from "@element-plus/icons-vue"
 import Dialog from "@/components/Dialog/index.vue"
-import { danieUavApi } from "@/api/danieUav"
-import { getDroneLastPosition } from "@/api/system/uav-drone"
-import { isDanieOk } from "@/utils/ai-drone/response"
+import { uavApi } from "@/api/uav"
+import { isUavApiOk } from "@/utils/ai-drone/response"
 import { fetchCapturePage, type UavCaptureCardRecord } from "@/utils/system/uav-capture-mapper"
-import { UAV_AI_EVENT_CLASS_OPTIONS } from "@/views/researchManagement/aiDrone/constants"
-import EventDetailDialog from "@/views/researchManagement/aiDrone/components/EventDetailDialog.vue"
+import { UAV_AI_EVENT_CLASS_OPTIONS } from "@/views/patrol/aiDrone/constants"
+import EventDetailDialog from "@/views/patrol/aiDrone/components/EventDetailDialog.vue"
 
 defineOptions({ name: "UavDeviceCaptureDialog" })
 
@@ -59,11 +58,11 @@ function buildQueryParams() {
 
 async function loadDeviceOptions() {
   try {
-    const res = (await getDroneLastPosition()) as {
+    const res = (await uavApi.GetDroneLastPosition()) as {
       success?: boolean
       response?: { device_sn?: string; device_name?: string }[]
     }
-    if (isDanieOk(res) && Array.isArray(res.response)) {
+    if (isUavApiOk(res) && Array.isArray(res.response)) {
       deviceOptions.value = res.response
         .filter((d) => d.device_sn)
         .map((d) => ({
@@ -79,7 +78,7 @@ async function loadDeviceOptions() {
 async function getList() {
   loading.value = true
   try {
-    const result = await fetchCapturePage((p) => danieUavApi.GetPageAIAssessmentResult(p), buildQueryParams())
+    const result = await fetchCapturePage((p) => uavApi.GetPageAIAssessmentResult(p), buildQueryParams())
     pageRecords.value = result.list
     totalCount.value = result.total
   } finally {
@@ -103,11 +102,11 @@ async function handleCollect(resultId: number, collection: boolean) {
       cancelButtonText: "取消",
       type: "warning"
     })
-    const res = (await danieUavApi.PutAIResultCollection({ resultId, collection })) as {
+    const res = (await uavApi.PutAIResultCollection({ resultId, collection })) as {
       success?: boolean
       msg?: string
     }
-    if (isDanieOk(res)) {
+    if (isUavApiOk(res)) {
       ElMessage.success(`${collection ? "" : "取消"}收藏成功`)
       await getList()
       return
@@ -125,11 +124,11 @@ async function handleDelete(resultId: number) {
       cancelButtonText: "取消",
       type: "warning"
     })
-    const res = (await danieUavApi.DeleteDroneAiResult({ aiResultId: resultId })) as {
+    const res = (await uavApi.DeleteDroneAiResult({ aiResultId: resultId })) as {
       success?: boolean
       msg?: string
     }
-    if (isDanieOk(res)) {
+    if (isUavApiOk(res)) {
       ElMessage.success("删除成功")
       await getList()
       return

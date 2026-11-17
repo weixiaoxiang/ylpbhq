@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Refresh, Search } from "@element-plus/icons-vue"
 import Pagination from "@/components/Pagination/index.vue"
-import { getPageDrone, type UavAirportDroneRow } from "@/api/system/uav-drone"
-import { isDanieOk } from "@/utils/ai-drone/response"
+import { uavApi, type UavAirportDroneRow } from "@/api/uav"
+import { isUavApiOk } from "@/utils/ai-drone/response"
 import UavDeviceCaptureDialog from "./UavDeviceCaptureDialog.vue"
 import UavFlightRecordDialog from "./UavFlightRecordDialog.vue"
 
@@ -29,11 +29,11 @@ async function getList() {
   try {
     const payload = { ...queryForm }
     if (payload.isFly === "") delete (payload as { isFly?: boolean | "" }).isFly
-    const res = (await getPageDrone(payload)) as {
+    const res = (await uavApi.GetPageDrone(payload)) as {
       success?: boolean
       response?: UavAirportDroneRow[]
     }
-    if (isDanieOk(res) && Array.isArray(res.response)) {
+    if (isUavApiOk(res) && Array.isArray(res.response)) {
       tableData.value = res.response
       total.value = res.response.length
     } else {

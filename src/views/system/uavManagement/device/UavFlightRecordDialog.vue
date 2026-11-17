@@ -2,9 +2,9 @@
 import { Search } from "@element-plus/icons-vue"
 import Dialog from "@/components/Dialog/index.vue"
 import Pagination from "@/components/Pagination/index.vue"
-import { getDroneLastPosition, getPageAIVideoLib, type UavVideoLibItem } from "@/api/system/uav-drone"
-import { danieFileUrl } from "@/utils/ai-drone/file-url"
-import { isDanieOk } from "@/utils/ai-drone/response"
+import { uavApi, type UavVideoLibItem } from "@/api/uav"
+import { uavFileUrl } from "@/utils/ai-drone/file-url"
+import { isUavApiOk } from "@/utils/ai-drone/response"
 
 defineOptions({ name: "UavFlightRecordDialog" })
 
@@ -23,16 +23,16 @@ const queryForm = reactive({
 
 function resolveCover(path?: string) {
   if (!path) return ""
-  return danieFileUrl(path)
+  return uavFileUrl(path)
 }
 
 async function loadDeviceOptions() {
   try {
-    const res = (await getDroneLastPosition()) as {
+    const res = (await uavApi.GetDroneLastPosition()) as {
       success?: boolean
       response?: { device_sn?: string; device_name?: string }[]
     }
-    if (isDanieOk(res) && Array.isArray(res.response)) {
+    if (isUavApiOk(res) && Array.isArray(res.response)) {
       deviceOptions.value = res.response
         .filter((d) => d.device_sn)
         .map((d) => ({
@@ -49,7 +49,7 @@ async function getList() {
   loading.value = true
   tableData.value = []
   try {
-    const res = (await getPageAIVideoLib({
+    const res = (await uavApi.GetPageAIVideoLib({
       ...queryForm,
       startTime: dateRange.value?.[0],
       endTime: dateRange.value?.[1],
@@ -58,7 +58,7 @@ async function getList() {
       success?: boolean
       response?: { data?: UavVideoLibItem[]; dataCount?: number }
     }
-    if (isDanieOk(res) && res.response) {
+    if (isUavApiOk(res) && res.response) {
       tableData.value = res.response.data ?? []
       total.value = res.response.dataCount ?? 0
     } else {

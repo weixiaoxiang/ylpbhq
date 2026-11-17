@@ -1,4 +1,4 @@
-import { danieFileUrl } from "@/utils/ai-drone/file-url"
+import { uavFileUrl } from "@/utils/ai-drone/file-url"
 import { isAiResultAssessed } from "@/utils/ai-drone/ai-assessment-status"
 import { unwrapPage } from "@/utils/ai-drone/response"
 
@@ -43,7 +43,7 @@ export function mapAiRowToCaptureCard(item: Record<string, unknown>): UavCapture
   return {
     id: String(resultId),
     resultId,
-    image: danieFileUrl(String(item.image_url_local ?? "")),
+    image: uavFileUrl(String(item.image_url_local ?? "")),
     location: resolveLocation(item),
     capturedAt: String(item.create_time ?? "").trim(),
     eventType: resolveEventTypeLabel(String(item.class_name ?? "")),

@@ -37,6 +37,16 @@ export const constantRoutes: RouteRecordRaw[] | any = [
   {
     path: "/login",
     component: () => import("@/views/login/index.vue")
+  },
+  /** 菜单迁至智能巡护后，兼容旧书签与外链 */
+  {
+    path: "/researchManagement/aiDrone/:pathMatch(.*)*",
+    redirect: (to) => {
+      const segment = to.params.pathMatch
+      const sub = Array.isArray(segment) ? segment.join("/") : segment || "oneMap"
+      return `/patrol/aiDrone/${sub}`
+    },
+    meta: { hidden: true }
   }
   // ************************************* 项目正式路由start *************************************
   // 全部定义为动态路由
