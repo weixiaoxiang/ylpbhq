@@ -29,8 +29,6 @@ import VideoDialog from "./components/VideoDialog.vue"
 import { useCssVariables } from "@/hooks/useCssVariables"
 import {
   AI_DRONE_AI_ANALYSIS_RIGHT_WIDTH,
-  AI_DRONE_AI_ANALYSIS_VIDEO_GAP,
-  AI_DRONE_AI_ANALYSIS_VIDEO_HEIGHT,
   AI_DRONE_BOARD_WIDTH,
   AI_DRONE_AI_ANALYSIS_DEVICE_RAIL_WIDTH,
   AI_DRONE_AI_ANALYSIS_LEGEND_DEVICE_GAP,
@@ -108,7 +106,6 @@ function syncOneMapLayoutVars() {
   const onAiAnalysis = route.path.includes("/aiAnalysis")
   const onEventWarning = route.path.includes("/eventWarning")
   const onFlightPlan = route.path.includes("/flightPlan")
-  const aiVideoReserve = AI_DRONE_AI_ANALYSIS_VIDEO_HEIGHT + AI_DRONE_AI_ANALYSIS_VIDEO_GAP
   const eventWarningBottomReserve = AI_DRONE_EVENT_WARNING_BOTTOM_HEIGHT + AI_DRONE_EVENT_WARNING_PANEL_GAP
   /* 右：预警事件 + 统计列；底栏「类型分析」贴屏幕最左 */
   const eventWarningRightStack =
@@ -119,7 +116,7 @@ function syncOneMapLayoutVars() {
   const bottomReserve = onOneMap
     ? `${oneMapBottomPx}px`
     : onAiAnalysis
-      ? `${aiVideoReserve}px`
+      ? `${AI_DRONE_PANEL_EDGE_INSET}px`
       : onEventWarning
         ? `${eventWarningBottomReserve}px`
         : "0px"
@@ -142,7 +139,7 @@ function syncOneMapLayoutVars() {
         ? `calc(${AI_DRONE_ONE_MAP_CAPTURE_HEIGHT}px + ${AI_DRONE_ONE_MAP_CAPTURE_GAP + 18}px)`
         : "20px"
       : onAiAnalysis
-        ? `calc(${aiVideoReserve}px + 18px)`
+        ? "20px"
         : onEventWarning
           ? `calc(${eventWarningBottomReserve}px + 18px)`
           : "20px"

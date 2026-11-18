@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无人机 WS 直播 Canvas 诊断页</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      color: #e8f2ff;
+      background: linear-gradient(165deg, #0a1628 0%, #050d18 100%);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #7ec8ff;
+    }
+
+    .intro {
+      margin: 0 0 20px;
+      line-height: 1.65;
+      color: rgba(200, 215, 235, 0.85);
+    }
+
+  .intro code {
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: rgba(12, 40, 77, 0.8);
+      font-size: 13px;
+    }
+
+    .panel {
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(62, 140, 210, 0.35);
+      border-radius: 8px;
+      background: rgba(8, 22, 42, 0.92);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: #9edcff;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    label {
+      flex-shrink: 0;
+      color: rgba(190, 204, 220, 0.9);
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      flex: 1;
+      min-width: 200px;
+      max-width: 420px;
+      height: 36px;
+      padding: 0 12px;
+      color: #e8f2ff;
+      border: 1px solid rgba(48, 72, 104, 0.95);
+      border-radius: 4px;
+      background: rgba(8, 28, 52, 0.95);
+    }
+
+    button {
+      height: 36px;
+      padding: 0 16px;
+      font-size: 13px;
+      color: #e8f2ff;
+      cursor: pointer;
+      border: 1px solid rgba(88, 186, 241, 0.55);
+      border-radius: 4px;
+      background: rgba(20, 60, 110, 0.85);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      border-color: #7ec8ff;
+      background: rgba(40, 100, 160, 0.9);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    button.danger {
+      border-color: rgba(255, 120, 100, 0.5);
+      background: rgba(80, 30, 30, 0.6);
+    }
+
+    button.warn {
+      border-color: rgba(255, 180, 80, 0.55);
+      background: rgba(70, 50, 20, 0.65);
+    }
+
+    /* 模拟直播小窗尺寸（与 LiveStreamOverlay 小窗约 520×375 内边距后区域接近） */
+    .video-shell {
+      width: 520px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid rgba(126, 200, 255, 0.42);
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .video-shell--compact {
+      width: 480px;
+    }
+
+    .video-shell.is-hidden {
+      display: none;
+    }
+
+    #videoCanvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+      background: #061018;
+      border-radius: 4px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px 16px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .stats li {
+      font-size: 13px;
+      color: rgba(200, 215, 235, 0.9);
+    }
+
+    .stats strong {
+      color: #7ec8ff;
+      font-weight: 600;
+    }
+
+    .verdict {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 4px;
+      border-left: 3px solid #58baf1;
+      background: rgba(10, 40, 72, 0.5);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .log {
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 10px;
+      padding: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      color: rgba(180, 200, 220, 0.85);
+      border: 1px solid rgba(48, 72, 104, 0.6);
+      border-radius: 4px;
+      background: rgba(4, 12, 24, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>无人机 WS 直播 Canvas 诊断页</h1>
+    <p class="intro">
+      本页<strong>独立于 Vue / 地图 Popup</strong>，复刻
+      <code>LiveStreamOverlay.vue</code> 的播放链路：<code>WebSocket(blob)</code> → JPEG
+      <code>Blob</code> → <code>Image</code> → <code>Canvas</code>（小窗 contain + 黑底）。
+      需无人机<strong>已起飞</strong>才有画面。开发环境访问：
+      <code>/ai-drone/ws-live-canvas-debug.html</code>（端口以 Vite 为准）。
+    </p>
+
+    <div class="panel">
+      <h2>连接</h2>
+      <div class="row">
+        <label for="deviceSn">设备 SN</label>
+        <input
+          id="deviceSn"
+          type="text"
+          value="1581F8HGX266C00A1XS2"
+          autocomplete="off"
+        />
+        <button type="button" id="btnConnect">连接</button>
+        <button type="button" id="btnDisconnect" class="danger" disabled>断开</button>
+      </div>
+      <p class="intro" style="margin: 0; font-size: 12px;">
+        WS 地址规则与线上一致：<code>ws://183.162.224.56:8770/stream/{sn}</code>（https 页面自动用 wss）。
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>画面</h2>
+      <div id="videoShell" class="video-shell">
+        <canvas id="videoCanvas" width="480" height="280"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>干扰模拟（不关 WebSocket，仅动布局）</h2>
+      <div class="row">
+        <button type="button" id="btnToggleVisible">隐藏 / 显示容器</button>
+        <button type="button" id="btnJitterSize" class="warn">切换容器尺寸（520 ↔ 480）</button>
+        <label for="burstCount">连点次数</label>
+        <input id="burstCount" type="number" min="1" max="50" value="20" style="max-width: 72px" />
+        <button type="button" id="btnBurstToggle" class="warn">快速切换显隐</button>
+      </div>
+      <p class="intro" style="margin: 0; font-size: 12px;">
+        用于近似地图 Popup 多次开关、<code>ResizeObserver</code> 触发的 <code>initCanvas</code>。正式环境还有双
+        canvas、OL Overlay、device watch 重连等，此处<strong>故意不模拟</strong>。
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>状态</h2>
+      <ul class="stats" id="statsList">
+        <li>WebSocket：<strong id="statWs">未连接</strong></li>
+        <li>URL：<strong id="statUrl">—</strong></li>
+        <li>累计帧：<strong id="statFrames">0</strong></li>
+        <li>FPS（约）：<strong id="statFps">0</strong></li>
+        <li>重连次数：<strong id="statReconnect">0</strong></li>
+        <li>丢弃帧（过期/堆积）：<strong id="statDropped">0</strong></li>
+        <li>Canvas 像素：<strong id="statCanvasSize">—</strong></li>
+      </ul>
+      <div class="verdict">
+        <strong>如何判定：</strong><br />
+        1）本页长时间播放 + 干扰后仍流畅，但业务地图 Popup 卡顿 → 优先查 Overlay 生命周期、
+        <code>watch(device)</code> 重连、双 canvas、ResizeObserver。<br />
+        2）本页也卡 → 查流媒体服务、网络、浏览器解码或帧率本身。
+      </div>
+      <div class="log" id="logBox" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STREAM_HOST = "183.162.224.56:8770"
+      const MAX_RECONNECT = 3
+
+      const elSn = document.getElementById("deviceSn")
+      const elShell = document.getElementById("videoShell")
+      const elCanvas = document.getElementById("videoCanvas")
+      const btnConnect = document.getElementById("btnConnect")
+      const btnDisconnect = document.getElementById("btnDisconnect")
+      const btnToggleVisible = document.getElementById("btnToggleVisible")
+      const btnJitterSize = document.getElementById("btnJitterSize")
+      const btnBurstToggle = document.getElementById("btnBurstToggle")
+      const burstCountInput = document.getElementById("burstCount")
+      const logBox = document.getElementById("logBox")
+
+      const statWs = document.getElementById("statWs")
+      const statUrl = document.getElementById("statUrl")
+      const statFrames = document.getElementById("statFrames")
+      const statFps = document.getElementById("statFps")
+      const statReconnect = document.getElementById("statReconnect")
+      const statDropped = document.getElementById("statDropped")
+      const statCanvasSize = document.getElementById("statCanvasSize")
+
+      let socket = null
+      let canvasContext = elCanvas.getContext("2d")
+      let closingIntentionally = false
+      let reconnectAttempts = 0
+      let reconnectTimer = null
+      let sessionActive = false
+      /** 每次 connect / disconnect 自增，用于作废未完成的 Image 解码与旧 WS 回调 */
+      let playbackEpoch = 0
+      let isConnecting = false
+      /** 解码管线忙时只保留最新一帧，避免断连重连后 onload 队列堆积 */
+      let framePipelineBusy = false
+      let queuedFrameBlob = null
+      let droppedFrameCount = 0
+
+      let frameCount = 0
+      let fpsWindowStart = performance.now()
+      let fpsWindowFrames = 0
+      let sizeToggleCompact = false
+      let shellVisible = true
+
+      function log(msg) {
+        const line = document.createElement("div")
+        const t = new Date().toLocaleTimeString("zh-CN", { hour12: false })
+        line.textContent = "[" + t + "] " + msg
+        logBox.appendChild(line)
+        while (logBox.children.length > 80) {
+          logBox.removeChild(logBox.firstChild)
+        }
+        logBox.scrollTop = logBox.scrollHeight
+      }
+
+      function buildStreamUrl(sn) {
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
+        return protocol + "//" + STREAM_HOST + "/stream/" + encodeURIComponent(sn)
+      }
+
+      /** 与 LiveStreamOverlay.initCanvas 类似：按容器 client 尺寸设 canvas 像素 */
+      function initCanvas() {
+        const parent = elCanvas.parentElement
+        if (!parent || parent.offsetParent === null && !shellVisible) {
+          return
+        }
+        const w = Math.max(320, Math.floor(parent.clientWidth || 480))
+        const h = Math.max(180, Math.floor(parent.clientHeight || 280))
+        if (elCanvas.width !== w || elCanvas.height !== h) {
+          elCanvas.width = w
+          elCanvas.height = h
+          canvasContext = elCanvas.getContext("2d")
+          log("initCanvas → " + w + "×" + h)
+        }
+        statCanvasSize.textContent = elCanvas.width + " × " + elCanvas.height
+      }
+
+      function bumpDropped() {
+        droppedFrameCount++
+        statDropped.textContent = String(droppedFrameCount)
+      }
+
+      /** 彻底卸载旧 WebSocket，避免 close 后仍触发 onmessage */
+      function teardownSocket(ws) {
+        if (!ws) return
+        ws.onopen = null
+        ws.onmessage = null
+        ws.onerror = null
+        ws.onclose = null
+        try {
+          if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+            ws.close()
+          }
+        } catch (err) {
+          log("关闭 socket 异常: " + String(err))
+        }
+      }
+
+      function resetFramePipeline() {
+        framePipelineBusy = false
+        queuedFrameBlob = null
+      }
+
+      function paintImageToCanvas(image) {
+        initCanvas()
+        const canvas = elCanvas
+        const scaleX = canvas.width / image.width
+        const scaleY = canvas.height / image.height
+        const scale = Math.min(scaleX, scaleY)
+        const width = image.width * scale
+        const height = image.height * scale
+        const x = (canvas.width - width) / 2
+        const y = (canvas.height - height) / 2
+        canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+        canvasContext.fillStyle = "#061018"
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height)
+        canvasContext.drawImage(image, x, y, width, height)
+
+        frameCount++
+        fpsWindowFrames++
+        statFrames.textContent = String(frameCount)
+        const now = performance.now()
+        if (now - fpsWindowStart >= 1000) {
+          const fps = Math.round((fpsWindowFrames * 1000) / (now - fpsWindowStart))
+          statFps.textContent = String(fps)
+          fpsWindowStart = now
+          fpsWindowFrames = 0
+        }
+      }
+
+      function flushQueuedFrame(epoch) {
+        if (!sessionActive || epoch !== playbackEpoch || !queuedFrameBlob) return
+        const next = queuedFrameBlob
+        queuedFrameBlob = null
+        enqueueFrameDecode(next, epoch)
+      }
+
+      /** 与 LiveStreamOverlay.drawFrame（小窗 contain），带 epoch 防止断连重连后旧帧回写 */
+      function enqueueFrameDecode(blob, epoch) {
+        if (!sessionActive || epoch !== playbackEpoch) {
+          bumpDropped()
+          return
+        }
+        if (framePipelineBusy) {
+          if (queuedFrameBlob) bumpDropped()
+          queuedFrameBlob = blob
+          return
+        }
+        framePipelineBusy = true
+        const url = URL.createObjectURL(blob)
+        const image = new Image()
+        image.onload = function () {
+          framePipelineBusy = false
+          if (!canvasContext || !sessionActive || epoch !== playbackEpoch) {
+            URL.revokeObjectURL(url)
+            bumpDropped()
+            flushQueuedFrame(epoch)
+            return
+          }
+          paintImageToCanvas(image)
+          URL.revokeObjectURL(url)
+          flushQueuedFrame(epoch)
+        }
+        image.onerror = function () {
+          framePipelineBusy = false
+          URL.revokeObjectURL(url)
+          log("帧解码失败")
+          flushQueuedFrame(epoch)
+        }
+        image.src = url
+      }
+
+      function handleSocketMessage(event, epoch) {
+        if (!sessionActive || epoch !== playbackEpoch) return
+        enqueueFrameDecode(new Blob([event.data], { type: "image/jpeg" }), epoch)
+      }
+
+      function scheduleReconnect() {
+        if (!sessionActive) return
+        if (reconnectAttempts >= MAX_RECONNECT) {
+          log("重连已达上限")
+          statWs.textContent = "重连失败"
+          return
+        }
+        reconnectAttempts++
+        statReconnect.textContent = String(reconnectAttempts)
+        log("正在重连 (" + reconnectAttempts + "/" + MAX_RECONNECT + ")")
+        reconnectTimer = setTimeout(connect, 2000 * reconnectAttempts)
+      }
+
+      function connect() {
+        if (socket || isConnecting) return
+        closingIntentionally = false
+        const sn = (elSn.value || "").trim()
+        if (!sn) {
+          log("请填写设备 SN")
+          return
+        }
+        playbackEpoch++
+        const epoch = playbackEpoch
+        resetFramePipeline()
+        sessionActive = true
+        isConnecting = true
+        const url = buildStreamUrl(sn)
+        statUrl.textContent = url
+        statWs.textContent = "连接中…"
+        log("连接 " + url + " (epoch=" + epoch + ")")
+
+        const ws = new WebSocket(url)
+        socket = ws
+        ws.binaryType = "blob"
+        ws.onopen = function () {
+          if (ws !== socket || epoch !== playbackEpoch) return
+          isConnecting = false
+          reconnectAttempts = 0
+          statReconnect.textContent = "0"
+          statWs.textContent = "已连接"
+          btnConnect.disabled = true
+          btnDisconnect.disabled = false
+          elSn.disabled = true
+          log("WebSocket 已连接")
+          initCanvas()
+        }
+        ws.onerror = function () {
+          if (ws !== socket) return
+          log("WebSocket 错误")
+        }
+        ws.onmessage = function (event) {
+          if (ws !== socket) return
+          handleSocketMessage(event, epoch)
+        }
+        ws.onclose = function () {
+          if (ws === socket) socket = null
+          isConnecting = false
+          statWs.textContent = sessionActive && epoch === playbackEpoch ? "已断开" : "未连接"
+          if (sessionActive && epoch === playbackEpoch && !closingIntentionally) {
+            scheduleReconnect()
+          }
+        }
+      }
+
+      function closeSocket() {
+        closingIntentionally = true
+        if (reconnectTimer) {
+          clearTimeout(reconnectTimer)
+          reconnectTimer = null
+        }
+        const ws = socket
+        socket = null
+        teardownSocket(ws)
+      }
+
+      function disconnect() {
+        sessionActive = false
+        playbackEpoch++
+        resetFramePipeline()
+        closeSocket()
+        closingIntentionally = false
+        isConnecting = false
+        btnConnect.disabled = false
+        btnDisconnect.disabled = true
+        elSn.disabled = false
+        statWs.textContent = "未连接"
+        log("已主动断开 (epoch 作废未完成帧)")
+      }
+
+      btnConnect.addEventListener("click", connect)
+      btnDisconnect.addEventListener("click", disconnect)
+
+      btnToggleVisible.addEventListener("click", function () {
+        shellVisible = !shellVisible
+        if (shellVisible) {
+          elShell.classList.remove("is-hidden")
+        } else {
+          elShell.classList.add("is-hidden")
+        }
+        log(shellVisible ? "容器已显示（未断流）" : "容器已隐藏（未断流）")
+        if (shellVisible) {
+          requestAnimationFrame(function () {
+            initCanvas()
+          })
+        }
+      })
+
+      btnJitterSize.addEventListener("click", function () {
+        sizeToggleCompact = !sizeToggleCompact
+        elShell.classList.toggle("video-shell--compact", sizeToggleCompact)
+        log("容器宽度切换为 " + (sizeToggleCompact ? "480px" : "520px"))
+        requestAnimationFrame(function () {
+          initCanvas()
+        })
+      })
+
+      btnBurstToggle.addEventListener("click", function () {
+        const n = Math.min(50, Math.max(1, parseInt(burstCountInput.value, 10) || 20))
+        let i = 0
+        btnBurstToggle.disabled = true
+        log("开始快速显隐 ×" + n)
+        const tick = function () {
+          shellVisible = !shellVisible
+          elShell.classList.toggle("is-hidden", !shellVisible)
+          if (shellVisible) {
+            initCanvas()
+          }
+          i++
+          if (i < n) {
+            setTimeout(tick, 120)
+          } else {
+            shellVisible = true
+            elShell.classList.remove("is-hidden")
+            initCanvas()
+            btnBurstToggle.disabled = false
+            log("快速显隐结束，容器已显示")
+          }
+        }
+        tick()
+      })
+
+      window.addEventListener("resize", function () {
+        if (sessionActive) initCanvas()
+      })
+
+      initCanvas()
+      log("诊断页就绪")
+    })()
+  </script>
+</body>
+</html>

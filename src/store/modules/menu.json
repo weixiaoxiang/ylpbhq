@@ -1876,7 +1876,7 @@
     "createUserId": 1,
     "effective": true,
     "icon": "",
-    "name": "AI分析",
+    "name": "飞行记录",
     "pId": 100,
     "path": "aiAnalysis",
     "perm": null,

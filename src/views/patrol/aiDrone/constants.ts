@@ -13,8 +13,11 @@ export const AI_DRONE_BOARD_WIDTH = 660
 /** 一张图：是否展示底部抓拍、无人机数据看板、数据分析左侧图表 */
 export const ONE_MAP_SHOW_LEGACY_PANELS = false
 
-/** 一张图精简模式：仅飞行统计/任务时的右栏宽度 */
-export const ONE_MAP_FLIGHT_BOARD_WIDTH = 400
+/** 各子页右侧看板统一宽度（一张图飞行概况 / AI 分析 / 航飞计划，与 maptool-sidebar-right 联动） */
+export const AI_DRONE_RIGHT_PANEL_WIDTH = 420
+
+/** 一张图精简模式：飞行概况右栏（与 AI 分析、航飞计划同宽） */
+export const ONE_MAP_FLIGHT_BOARD_WIDTH = AI_DRONE_RIGHT_PANEL_WIDTH
 
 /** AI 分析页：底部视频库高度（对齐一张图抓拍条，与地图工具条 bottom 联动） */
 export const AI_DRONE_AI_ANALYSIS_VIDEO_HEIGHT = 268
@@ -22,8 +25,8 @@ export const AI_DRONE_AI_ANALYSIS_VIDEO_HEIGHT = 268
 /** AI 分析页：底部视频库与容器底边间距 */
 export const AI_DRONE_AI_ANALYSIS_VIDEO_GAP = 10
 
-/** AI 分析页：右侧研判列表宽度 */
-export const AI_DRONE_AI_ANALYSIS_RIGHT_WIDTH = 420
+/** AI 分析页：右侧视频库列表宽度 */
+export const AI_DRONE_AI_ANALYSIS_RIGHT_WIDTH = AI_DRONE_RIGHT_PANEL_WIDTH
 
 /** 左侧 PageTabs 占用宽度（与 pages-tabs 定位一致） */
 export const AI_DRONE_TABS_OFFSET = 200
@@ -73,8 +76,8 @@ export const AI_DRONE_EVENT_WARNING_ANALYSIS_MIN_HEIGHT = 148
 /** 事件预警：面板间距 */
 export const AI_DRONE_EVENT_WARNING_PANEL_GAP = 10
 
-/** 航飞计划：右侧「计划库」宽度（与 AI 分析研判列一致，图例/工具条共用同一 right 栈） */
-export const AI_DRONE_FLIGHT_PLAN_PANEL_WIDTH = AI_DRONE_AI_ANALYSIS_RIGHT_WIDTH
+/** 航飞计划：右侧「计划库」宽度（与统一右栏宽度一致，图例/工具条共用同一 right 栈） */
+export const AI_DRONE_FLIGHT_PLAN_PANEL_WIDTH = AI_DRONE_RIGHT_PANEL_WIDTH
 
 /** 航线统计条距左侧 Tab、右侧看板的内边距（与大鲵 hfjh 地图顶栏一致） */
 export const AI_DRONE_WAYLINE_STATS_EDGE_GAP = 16
@@ -91,24 +94,19 @@ export interface AiDroneMapInitialView {
   zoom: number
 }
 
-export const AI_DRONE_MAP_INITIAL_ONE_MAP: AiDroneMapInitialView = {
-  center: [116.21409542422317, 30.992958207902763],
-  zoom: 12
+/** 航飞计划默认视野（一张图 / AI 分析与之共用，保证切换 Tab 视角一致） */
+export const AI_DRONE_MAP_INITIAL_FLIGHT_PLAN: AiDroneMapInitialView = {
+  center: [116.13890745637595, 31.03078475053754],
+  zoom: 13
 }
 
-export const AI_DRONE_MAP_INITIAL_AI_ANALYSIS: AiDroneMapInitialView = {
-  center: [116.17246754031204, 30.991241151136126],
-  zoom: 12
-}
+export const AI_DRONE_MAP_INITIAL_ONE_MAP: AiDroneMapInitialView = AI_DRONE_MAP_INITIAL_FLIGHT_PLAN
+
+export const AI_DRONE_MAP_INITIAL_AI_ANALYSIS: AiDroneMapInitialView = AI_DRONE_MAP_INITIAL_FLIGHT_PLAN
 
 export const AI_DRONE_MAP_INITIAL_EVENT_WARNING: AiDroneMapInitialView = {
   center: [116.22718460421585, 30.986304612932045],
   zoom: 12
-}
-
-export const AI_DRONE_MAP_INITIAL_FLIGHT_PLAN: AiDroneMapInitialView = {
-  center: [116.13890745637595, 31.03078475053754],
-  zoom: 13
 }
 
 /** 按路由 path 解析当前子页默认视野 */
@@ -124,7 +122,7 @@ export function getAiAnalysisLeftMapInset(): number {
   return AI_DRONE_PANEL_EDGE_INSET + AI_DRONE_TABS_OFFSET
 }
 
-/** AI 分析：右侧浮层占用（研判列 + 图例 + 设备栏，地图主视野在偏左上方） */
+/** AI 分析：右侧浮层占用（视频库 + 图例 + 设备栏，地图主视野在偏左上方） */
 export function getAiAnalysisRightMapInset(): number {
   return (
     AI_DRONE_PANEL_EDGE_INSET +
@@ -136,9 +134,9 @@ export function getAiAnalysisRightMapInset(): number {
   )
 }
 
-/** AI 分析：底部视频库占用高度 */
+/** AI 分析：底部留白（视频库已移至右侧，仅保留底边距） */
 export function getAiAnalysisBottomMapInset(): number {
-  return AI_DRONE_AI_ANALYSIS_VIDEO_HEIGHT + AI_DRONE_AI_ANALYSIS_VIDEO_GAP + AI_DRONE_PANEL_EDGE_INSET
+  return AI_DRONE_PANEL_EDGE_INSET
 }
 
 /** AI 分析事件类型，与大鲵筛选、研判类别一致 */

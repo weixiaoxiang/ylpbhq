@@ -45,6 +45,11 @@ let canvasContext: CanvasRenderingContext2D | null = null
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let reconnectAttempts = 0
 let closingIntentionally = false
+let isConnecting = false
+/** 每次停止/重连自增，作废未完成的 Image 解码与旧 WS 回调（对齐诊断页） */
+let playbackEpoch = 0
+let framePipelineBusy = false
+let queuedFrameBlob: Blob | null = null
 const MAX_RECONNECT_ATTEMPTS = 3
 /** 最近一次 WS 原始 JPEG，抓拍默认下载此 Blob */
 let lastRawFrameBlob: Blob | null = null
@@ -125,48 +130,111 @@ function refreshCanvasAfterLayout() {
   })
 }
 
-function closeSocket() {
+/** 卸载旧 WebSocket，避免 close 过程中仍触发 onmessage */
+function teardownSocket(ws: WebSocket | null) {
+  if (!ws) return
+  ws.onopen = null
+  ws.onmessage = null
+  ws.onerror = null
+  ws.onclose = null
+  try {
+    if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+      ws.close()
+    }
+  } catch {
+    /* 忽略关闭异常 */
+  }
+}
+
+function resetFramePipeline() {
+  framePipelineBusy = false
+  queuedFrameBlob = null
+}
+
+/** 停止拉流并作废未完成帧（关闭 popup、切换设备、组件卸载） */
+function stopStream() {
   closingIntentionally = true
   if (reconnectTimer) {
     clearTimeout(reconnectTimer)
     reconnectTimer = null
   }
-  socket?.close()
+  const ws = socket
   socket = null
+  teardownSocket(ws)
   isConnected.value = false
+  isConnecting = false
   reconnectAttempts = 0
-  nextTick(() => {
-    closingIntentionally = false
-  })
+  playbackEpoch++
+  resetFramePipeline()
+  resetCaptureCache()
+  hasFrames.value = false
 }
 
-function drawFrame(blob: Blob) {
+function closeSocket() {
+  stopStream()
+}
+
+function paintFrameToCanvas(image: HTMLImageElement) {
+  initCanvas()
+  const canvas = activeVideoCanvas()
+  if (!canvas) return
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return
+  canvasContext = ctx
+  const scaleX = canvas.width / image.width
+  const scaleY = canvas.height / image.height
+  // 地图模式铺满可视区；小窗保持完整画面
+  const scale = mapMode.value ? Math.max(scaleX, scaleY) : Math.min(scaleX, scaleY)
+  const width = image.width * scale
+  const height = image.height * scale
+  const x = (canvas.width - width) / 2
+  const y = (canvas.height - height) / 2
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = "#061018"
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(image, x, y, width, height)
+  hasFrames.value = true
+}
+
+function flushQueuedFrame(epoch: number) {
+  if (!props.device || epoch !== playbackEpoch || !queuedFrameBlob) return
+  const next = queuedFrameBlob
+  queuedFrameBlob = null
+  enqueueFrameDecode(next, epoch)
+}
+
+function enqueueFrameDecode(blob: Blob, epoch: number) {
+  if (!props.device || epoch !== playbackEpoch) return
+  if (framePipelineBusy) {
+    queuedFrameBlob = blob
+    return
+  }
+  framePipelineBusy = true
   lastRawFrameBlob = blob
   const url = URL.createObjectURL(blob)
   const image = new Image()
   image.onload = () => {
-    const canvas = activeVideoCanvas()
-    if (!props.device || !canvasContext || !canvas) {
+    framePipelineBusy = false
+    if (!props.device || epoch !== playbackEpoch) {
       URL.revokeObjectURL(url)
+      flushQueuedFrame(epoch)
       return
     }
-    const scaleX = canvas.width / image.width
-    const scaleY = canvas.height / image.height
-    // 地图模式铺满可视区；小窗保持完整画面
-    const scale = mapMode.value ? Math.max(scaleX, scaleY) : Math.min(scaleX, scaleY)
-    const width = image.width * scale
-    const height = image.height * scale
-    const x = (canvas.width - width) / 2
-    const y = (canvas.height - height) / 2
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height)
-    canvasContext.fillStyle = "#061018"
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
-    canvasContext.drawImage(image, x, y, width, height)
-    hasFrames.value = true
+    paintFrameToCanvas(image)
     URL.revokeObjectURL(url)
+    flushQueuedFrame(epoch)
   }
-  image.onerror = () => URL.revokeObjectURL(url)
+  image.onerror = () => {
+    framePipelineBusy = false
+    URL.revokeObjectURL(url)
+    flushQueuedFrame(epoch)
+  }
   image.src = url
+}
+
+function handleSocketMessage(event: MessageEvent, epoch: number) {
+  if (!props.device || epoch !== playbackEpoch) return
+  enqueueFrameDecode(new Blob([event.data], { type: "image/jpeg" }), epoch)
 }
 
 function scheduleReconnect() {
@@ -226,8 +294,11 @@ function resetCaptureCache() {
 }
 
 function connect() {
-  if (socket) return
+  if (socket || isConnecting) return
   closingIntentionally = false
+  playbackEpoch++
+  const epoch = playbackEpoch
+  resetFramePipeline()
   hasFrames.value = false
   resetCaptureCache()
   if (!deviceSn.value || !canStream.value) {
@@ -237,24 +308,31 @@ function connect() {
   statusText.value = "正在连接视频流..."
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
   const url = `${protocol}//183.162.224.56:8770/stream/${deviceSn.value}`
-  socket = new WebSocket(url)
-  socket.binaryType = "blob"
-  socket.onopen = () => {
+  isConnecting = true
+  const ws = new WebSocket(url)
+  socket = ws
+  ws.binaryType = "blob"
+  ws.onopen = () => {
+    if (ws !== socket || epoch !== playbackEpoch) return
+    isConnecting = false
     isConnected.value = true
     reconnectAttempts = 0
     statusText.value = "视频流已连接"
+    initCanvas()
   }
-  socket.onerror = () => {
+  ws.onerror = () => {
+    if (ws !== socket) return
     if (!hasFrames.value) statusText.value = "视频流连接失败"
   }
-  socket.onmessage = (event) => {
-    if (!props.device) return
-    drawFrame(new Blob([event.data], { type: "image/jpeg" }))
+  ws.onmessage = (event) => {
+    if (ws !== socket) return
+    handleSocketMessage(event, epoch)
   }
-  socket.onclose = () => {
+  ws.onclose = () => {
+    if (ws === socket) socket = null
+    isConnecting = false
     isConnected.value = false
-    socket = null
-    if (props.device && canStream.value && !closingIntentionally) {
+    if (props.device && canStream.value && epoch === playbackEpoch && !closingIntentionally) {
       scheduleReconnect()
     }
   }
@@ -308,9 +386,7 @@ watch(
       })
     } else {
       disposeControls()
-      closeSocket()
-      hasFrames.value = false
-      resetCaptureCache()
+      stopStream()
       mapMode.value = false
     }
   }
